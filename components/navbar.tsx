@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +8,30 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Coffee, User, LogOut, Settings, BookOpen, Info } from "lucide-react"
-import { useAuth } from "./auth-provider"
-import Link from "next/link"
-import { motion } from "framer-motion"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Coffee,
+  User,
+  LogOut,
+  Settings,
+  BookOpen,
+  Info,
+  Sun,
+  Moon,
+} from "lucide-react";
+import { useAuth } from "./auth-provider";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 export function Navbar() {
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuth();
+  const { setTheme, theme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   return (
     <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-md">
@@ -27,13 +42,21 @@ export function Navbar() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">IT</span>
               </div>
-              <span className="font-semibold text-lg text-gray-900">NUB IT Support</span>
+              <span className="font-semibold text-lg text-gray-900">
+                NUB IT Support
+              </span>
             </Link>
             <div className="hidden md:flex ml-8 space-x-6">
-              <Link href="/blog" className="text-gray-600 hover:text-blue-600 transition-colors flex items-center">
+              <Link
+                href="/blog"
+                className="text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
                 <BookOpen className="w-4 h-4 mr-1" /> Blog
               </Link>
-              <Link href="/about" className="text-gray-600 hover:text-blue-600 transition-colors flex items-center">
+              <Link
+                href="/about"
+                className="text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
                 <Info className="w-4 h-4 mr-1" /> About
               </Link>
             </div>
@@ -62,9 +85,15 @@ export function Navbar() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+                      <AvatarImage
+                        src="/placeholder-user.jpg"
+                        alt={user.name}
+                      />
                       <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -72,8 +101,12 @@ export function Navbar() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.role} • {user.userType}
                       </p>
@@ -105,9 +138,15 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="flex space-x-2">
+                <Button onClick={toggleTheme} variant="outline" size="icon">
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
                 <Link href="/login">
                   <Button variant="ghost">Sign In</Button>
                 </Link>
+
                 <Link href="/register">
                   <Button>Get Started</Button>
                 </Link>
@@ -117,5 +156,5 @@ export function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
