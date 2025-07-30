@@ -7,7 +7,7 @@ import Hero from "./hero";
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 min-h-screen">
       {/* Hero Section */}
       <Hero />
 

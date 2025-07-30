@@ -34,28 +34,28 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-md">
+    <nav className="border-b bg-zinc-50 dark:bg-zinc-900 backdrop-blur supports-[backdrop-filter]:bg-zinc-50 dark:supports-[backdrop-filter]:bg-zinc-900 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">IT</span>
+                <span className="text-gray-50 font-bold text-sm">IT</span>
               </div>
-              <span className="font-semibold text-lg text-gray-900">
+              <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
                 NUB IT Support
               </span>
             </Link>
             <div className="hidden md:flex ml-8 space-x-6">
               <Link
                 href="/blog"
-                className="text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+                className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
               >
                 <BookOpen className="w-4 h-4 mr-1" /> Blog
               </Link>
               <Link
                 href="/about"
-                className="text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+                className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
               >
                 <Info className="w-4 h-4 mr-1" /> About
               </Link>
@@ -74,13 +74,19 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="relative bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white border-0 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 overflow-hidden"
+                className="relative bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-50 dark:text-gray-100 border-0 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-transform duration-700"></div>
                 <Coffee className="w-4 h-4 mr-2 animate-bounce" />
                 <span className="relative z-10">Buy me a Coffee</span>
               </Button>
             </motion.div>
+
+            <Button onClick={toggleTheme} variant="outline" size="icon">
+              <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
 
             {user ? (
               <DropdownMenu>
@@ -138,11 +144,6 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="flex space-x-2">
-                <Button onClick={toggleTheme} variant="outline" size="icon">
-                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
                 <Link href="/login">
                   <Button variant="ghost">Sign In</Button>
                 </Link>
