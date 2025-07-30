@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ChevronDown, ChevronUp, HelpCircle, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, HelpCircle, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface FAQItem {
-  id: string
-  question: string
-  answer: string
-  category: "general" | "technical" | "account" | "features"
+  id: string;
+  question: string;
+  answer: string;
+  category: "general" | "technical" | "account" | "features";
 }
 
 export function FAQSection() {
-  const [openItems, setOpenItems] = useState<string[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [openItems, setOpenItems] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const faqData: FAQItem[] = [
     {
@@ -35,7 +35,8 @@ export function FAQSection() {
     },
     {
       id: "3",
-      question: "How long does it typically take to resolve an IT support request?",
+      question:
+        "How long does it typically take to resolve an IT support request?",
       answer:
         "Response times vary based on priority level: High priority issues are addressed within 2-4 hours, medium priority within 24 hours, and low priority within 48-72 hours. You'll receive updates throughout the resolution process.",
       category: "general",
@@ -54,91 +55,61 @@ export function FAQSection() {
         "Click on 'Forgot Password' on the login page, enter your registered email address, and you'll receive a password reset link. Follow the instructions in the email to create a new password securely.",
       category: "account",
     },
-    {
-      id: "6",
-      question: "What information should I include when reporting a technical issue?",
-      answer:
-        "Please provide: detailed description of the problem, steps you've already tried, error messages (if any), affected devices/software, location where the issue occurs, and urgency level. Screenshots are also helpful when applicable.",
-      category: "technical",
-    },
-    {
-      id: "7",
-      question: "Can I update or modify a task after submitting it?",
-      answer:
-        "Yes, you can edit tasks that you've created as long as they haven't been marked as resolved. Click on the task in your dashboard and select 'Edit' to modify the details or add additional information.",
-      category: "features",
-    },
-    {
-      id: "8",
-      question: "Who can access the IT Support system?",
-      answer:
-        "The system is available to all NUB community members including students, faculty, staff, and administrators. Each user type has appropriate access levels - regular users can manage their own tasks, while IT staff have administrative privileges.",
-      category: "account",
-    },
-    {
-      id: "9",
-      question: "Is there a mobile app available?",
-      answer:
-        "Currently, the system is web-based and fully responsive, working seamlessly on mobile browsers. A dedicated mobile app is planned for future release. You can access all features through your mobile browser.",
-      category: "technical",
-    },
-    {
-      id: "10",
-      question: "How do I escalate an urgent issue?",
-      answer:
-        "When creating a task, set the priority to 'High' and include 'URGENT' in the title. For critical emergencies affecting multiple users, you can also call the IT helpdesk directly at +880-2-8833388 during office hours.",
-      category: "general",
-    },
-    {
-      id: "11",
-      question: "Can I attach files or screenshots to my support request?",
-      answer:
-        "File attachment functionality is currently being developed and will be available soon. For now, you can include detailed descriptions and mention that you have screenshots available - IT staff can request them via email if needed.",
-      category: "features",
-    },
-    {
-      id: "12",
-      question: "What happens after my issue is resolved?",
-      answer:
-        "Once resolved, you'll receive a notification and the task status will update to 'Resolved'. You can view the resolution details and provide feedback. The task remains in your history for future reference.",
-      category: "general",
-    },
-  ]
+  ];
 
   const categories = [
     { value: "all", label: "All Categories", count: faqData.length },
-    { value: "general", label: "General", count: faqData.filter((item) => item.category === "general").length },
-    { value: "technical", label: "Technical", count: faqData.filter((item) => item.category === "technical").length },
-    { value: "account", label: "Account", count: faqData.filter((item) => item.category === "account").length },
-    { value: "features", label: "Features", count: faqData.filter((item) => item.category === "features").length },
-  ]
+    {
+      value: "general",
+      label: "General",
+      count: faqData.filter((item) => item.category === "general").length,
+    },
+    {
+      value: "technical",
+      label: "Technical",
+      count: faqData.filter((item) => item.category === "technical").length,
+    },
+    {
+      value: "account",
+      label: "Account",
+      count: faqData.filter((item) => item.category === "account").length,
+    },
+    {
+      value: "features",
+      label: "Features",
+      count: faqData.filter((item) => item.category === "features").length,
+    },
+  ];
 
   const filteredFAQs = faqData.filter((item) => {
     const matchesSearch =
       item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.answer.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+      item.answer.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const toggleItem = (id: string) => {
-    setOpenItems((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
-  }
+    setOpenItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "general":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-100 text-blue-800";
       case "technical":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800";
       case "account":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800";
       case "features":
-        return "bg-purple-100 text-purple-800"
+        return "bg-purple-100 text-purple-800";
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   return (
     <section className="py-24 bg-gray-50">
@@ -149,10 +120,12 @@ export function FAQSection() {
               <HelpCircle className="w-6 h-6 text-blue-600" />
             </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Frequently Asked Questions
+          </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Find quick answers to common questions about our IT support system. Can't find what you're looking for?
-            Contact us below.
+            Find quick answers to common questions about our IT support system.
+            Can't find what you're looking for? Contact us below.
           </p>
         </div>
 
@@ -175,7 +148,9 @@ export function FAQSection() {
             {categories.map((category) => (
               <Button
                 key={category.value}
-                variant={selectedCategory === category.value ? "default" : "outline"}
+                variant={
+                  selectedCategory === category.value ? "default" : "outline"
+                }
                 onClick={() => setSelectedCategory(category.value)}
                 className="rounded-full"
               >
@@ -193,14 +168,22 @@ export function FAQSection() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
-                <p className="text-gray-600">Try adjusting your search terms or browse different categories.</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No results found
+                </h3>
+                <p className="text-gray-600">
+                  Try adjusting your search terms or browse different
+                  categories.
+                </p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
               {filteredFAQs.map((item) => (
-                <Card key={item.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={item.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-0">
                     <button
                       onClick={() => toggleItem(item.id)}
@@ -210,12 +193,17 @@ export function FAQSection() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
+                                item.category
+                              )}`}
                             >
-                              {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                              {item.category.charAt(0).toUpperCase() +
+                                item.category.slice(1)}
                             </span>
                           </div>
-                          <h3 className="text-lg font-semibold text-gray-900 pr-8">{item.question}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 pr-8">
+                            {item.question}
+                          </h3>
                         </div>
                         <div className="flex-shrink-0 ml-4">
                           {openItems.includes(item.id) ? (
@@ -230,7 +218,9 @@ export function FAQSection() {
                     {openItems.includes(item.id) && (
                       <div className="px-6 pb-6">
                         <div className="border-t pt-4">
-                          <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.answer}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -244,10 +234,12 @@ export function FAQSection() {
         {/* Call to Action */}
         <div className="text-center mt-12">
           <div className="bg-white rounded-lg shadow-sm border p-8 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Still have questions?</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Still have questions?
+            </h3>
             <p className="text-gray-600 mb-6">
-              Can't find the answer you're looking for? Our support team is here to help you get the assistance you
-              need.
+              Can't find the answer you're looking for? Our support team is here
+              to help you get the assistance you need.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
@@ -261,5 +253,5 @@ export function FAQSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
