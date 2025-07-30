@@ -112,7 +112,7 @@ export function FAQSection() {
   };
 
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-4">
@@ -120,10 +120,10 @@ export function FAQSection() {
               <HelpCircle className="w-6 h-6 text-blue-600" />
             </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-100 max-w-2xl mx-auto">
             Find quick answers to common questions about our IT support system.
             Can't find what you're looking for? Contact us below.
           </p>
@@ -168,10 +168,10 @@ export function FAQSection() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-2">
                   No results found
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-red-100">
                   Try adjusting your search terms or browse different
                   categories.
                 </p>
@@ -182,12 +182,12 @@ export function FAQSection() {
               {filteredFAQs.map((item) => (
                 <Card
                   key={item.id}
-                  className="hover:shadow-md transition-shadow"
+                  className="hover:shadow-md bg-zinc-50 dark:bg-zinc-900 transition-shadow"
                 >
                   <CardContent className="p-0">
                     <button
                       onClick={() => toggleItem(item.id)}
-                      className="w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                      className="w-full text-left p-6 focus:outline-none duration-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:ring-inset"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -201,7 +201,7 @@ export function FAQSection() {
                                 item.category.slice(1)}
                             </span>
                           </div>
-                          <h3 className="text-lg font-semibold text-gray-900 pr-8">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 pr-8">
                             {item.question}
                           </h3>
                         </div>
@@ -218,7 +218,7 @@ export function FAQSection() {
                     {openItems.includes(item.id) && (
                       <div className="px-6 pb-6">
                         <div className="border-t pt-4">
-                          <p className="text-gray-700 leading-relaxed">
+                          <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
                             {item.answer}
                           </p>
                         </div>
@@ -233,16 +233,19 @@ export function FAQSection() {
 
         {/* Call to Action */}
         <div className="text-center mt-12">
-          <div className="bg-white rounded-lg shadow-sm border p-8 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg shadow-sm border p-8 max-w-2xl mx-auto">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
               Still have questions?
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-100 mb-6">
               Can't find the answer you're looking for? Our support team is here
               to help you get the assistance you need.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 dark:text-gray-50"
+              >
                 Contact Support Team
               </Button>
               <Button variant="outline" size="lg">

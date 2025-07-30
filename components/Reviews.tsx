@@ -64,14 +64,14 @@ function Reviews() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={sectionVariants}
-      className="py-24 bg-white"
+      className="py-24"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-4">
             What Our Users Say
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-100 max-w-2xl mx-auto">
             Hear from faculty, staff, and students who have transformed their IT
             support experience.
           </p>
@@ -88,7 +88,7 @@ function Reviews() {
         >
           {reviews.map((review, index) => (
             <motion.div key={index} variants={cardVariants}>
-              <Card className="hover:shadow-lg transition-shadow duration-300">
+              <Card className="hover:shadow-lg bg-gray-50 dark:bg-zinc-800 transition-shadow duration-300">
                 <CardContent className="pt-6">
                   <div className="flex items-center mb-4">
                     <img
@@ -97,10 +97,12 @@ function Reviews() {
                       className="w-12 h-12 rounded-full mr-4 object-cover border-2 border-gray-100"
                     />
                     <div>
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-50">
                         {review.name}
                       </h4>
-                      <p className="text-gray-600 text-sm">{review.role}</p>
+                      <p className="text-gray-600 dark:text-gray-100 text-sm">
+                        {review.role}
+                      </p>
                     </div>
                   </div>
                   <div className="flex mb-3">
@@ -115,7 +117,9 @@ function Reviews() {
                       />
                     ))}
                   </div>
-                  <p className="text-gray-700 italic">"{review.content}"</p>
+                  <p className="text-gray-700 dark:text-gray-200 italic">
+                    "{review.content}"
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>

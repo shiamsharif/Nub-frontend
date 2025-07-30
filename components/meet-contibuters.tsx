@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { parentVariants, slideVariants } from "@/lib/animate";
 
 interface Story {
   id: number;
@@ -108,29 +109,14 @@ type Contributor = {
   linkedin: string;
 };
 
-const StoryCard = ({ story }: { story: Story }) => {
-  return (
-    <motion.div
-      className="relative w-72 h-96 flex-shrink-0 rounded-lg overflow-hidden shadow-xl group"
-      whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
-    >
-      <img
-        src={story.imageUrl}
-        alt={story.title}
-        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-      <div className="relative z-10 flex flex-col justify-end h-full p-6 text-white">
-        <h3 className="font-bold text-2xl tracking-wide">{story.title}</h3>
-      </div>
-    </motion.div>
-  );
-};
 const ContributorCard = ({ contributor }: { contributor: Contributor }) => {
   return (
     <motion.div
       className="relative w-72 h-96 flex-shrink-0 rounded-lg overflow-hidden shadow-xl group"
-      whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+      initial="initial"
+      whileInView={"animate"}
+      viewport={{ once: true, amount: 0.8 }}
+      variants={parentVariants}
     >
       <img
         src={contributor.image}
@@ -139,8 +125,15 @@ const ContributorCard = ({ contributor }: { contributor: Contributor }) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
       <div className="relative z-10 flex flex-col justify-end h-full p-6 text-white">
-        <h3 className="font-bold text-2xl tracking-wide">{contributor.name}</h3>
-        <p className="text-sm mb-4">{contributor.role}</p>
+        <motion.h3
+          variants={slideVariants}
+          className="font-bold text-2xl tracking-wide"
+        >
+          {contributor.name}
+        </motion.h3>
+        <motion.p variants={slideVariants} className="text-sm mb-4">
+          {contributor.role}
+        </motion.p>
         <div className="flex items-center space-x-3">
           <a
             href={contributor.github}
@@ -216,15 +209,27 @@ export default function MeetContributors() {
   return (
     <div className="font-sans w-full py-12 md:py-20 flex flex-col items-center justify-center">
       <div className="w-full max-w-7xl mx-auto px-4">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-black dark:text-white ">
+        <motion.header
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={parentVariants}
+          className="text-center mb-12"
+        >
+          <motion.h1
+            variants={slideVariants}
+            className="text-4xl md:text-5xl font-bold text-black dark:text-white "
+          >
             Meet our Contributors
-          </h1>
-          <p className="mt-4 text-lg text-gray-400">
+          </motion.h1>
+          <motion.p
+            variants={slideVariants}
+            className="mt-4 text-lg text-gray-400"
+          >
             The talented team behind NUB IT Support system, dedicated to making
             your IT experience seamless.
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         <motion.div
           ref={containerRef}
