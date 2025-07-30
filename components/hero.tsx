@@ -118,7 +118,7 @@ export default function Hero() {
             <motion.div className={cardClasses} variants={cardVariants}>
               <Card className="border-0 shadow-xl bg-gray-50 dark:bg-zinc-800 hover:shadow-2xl transition-shadow duration-300">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                     <Zap className="w-6 h-6 text-blue-600" />
                   </div>
                   <CardTitle>Lightning Fast</CardTitle>
