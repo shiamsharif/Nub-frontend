@@ -180,7 +180,7 @@ export default function AboutPage() {
             Join thousands of satisfied users at NUB who rely on our efficient
             IT support system.
           </motion.p>
-          <Link href="/register">
+          <Link href="/auth/register">
             <Button
               size="lg"
               className="text-lg px-8 py-3 bg-white text-blue-600 dark:text-gray-800 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all"
