@@ -1,36 +1,42 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export default function ResetPasswordPage() {
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const { toast } = useToast()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const token = searchParams.get("token")
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (password !== confirmPassword) {
       toast({
         title: "Password mismatch",
         description: "Passwords do not match.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     if (!token) {
@@ -38,22 +44,22 @@ export default function ResetPasswordPage() {
         title: "Invalid token",
         description: "Reset token is missing or invalid.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     // Mock API call
     setTimeout(() => {
-      setSuccess(true)
-      setLoading(false)
+      setSuccess(true);
+      setLoading(false);
       toast({
         title: "Password reset successful",
         description: "Your password has been updated.",
-      })
-    }, 1000)
-  }
+      });
+    }, 1000);
+  };
 
   if (success) {
     return (
@@ -67,19 +73,20 @@ export default function ResetPasswordPage() {
             </div>
             <CardTitle>Password Reset Complete</CardTitle>
             <CardDescription>
-              Your password has been successfully updated. You can now sign in with your new password.
+              Your password has been successfully updated. You can now sign in
+              with your new password.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-center">
-              <Link href="/login">
+              <Link href="/auth/login">
                 <Button className="w-full">Sign In</Button>
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -91,8 +98,12 @@ export default function ResetPasswordPage() {
               <span className="text-white font-bold text-lg">IT</span>
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Reset your password</CardTitle>
-          <CardDescription className="text-center">Enter your new password below</CardDescription>
+          <CardTitle className="text-2xl text-center">
+            Reset your password
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your new password below
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -125,12 +136,15 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
           <div className="mt-4 text-center">
-            <Link href="/login" className="text-sm text-blue-600 hover:underline">
+            <Link
+              href="/auth/login"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Back to sign in
             </Link>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
