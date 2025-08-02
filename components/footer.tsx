@@ -69,7 +69,7 @@ export function Footer() {
             <ul className="space-y-3 text-gray-200">
               <li>
                 <Link
-                  href="/login"
+                  href="/auth/login"
                   className="hover:text-white transition-colors hover:underline"
                 >
                   Sign In
@@ -77,7 +77,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/register"
+                  href="/auth/register"
                   className="hover:text-white transition-colors hover:underline"
                 >
                   Register

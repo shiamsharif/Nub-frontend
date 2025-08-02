@@ -20,13 +20,13 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
-import { useAuth } from "./auth-provider";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/context/auth-context";
 
 export function Navbar() {
-  const { user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
@@ -88,7 +88,7 @@ export function Navbar() {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            {user ? (
+            {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -96,11 +96,8 @@ export function Navbar() {
                     className="relative h-8 w-8 rounded-full"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src="/placeholder-user.jpg"
-                        alt={user.name}
-                      />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src="/placeholder-user.jpg" alt={"Gues"} />
+                      <AvatarFallback>{"Gues".charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -108,13 +105,13 @@ export function Navbar() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user.name}
+                        {"Gues"}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
+                        user@nub.ac.bd
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user.role} • {user.userType}
+                        Student
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -127,14 +124,12 @@ export function Navbar() {
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
-                  {user.role === "ITStaff" && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard">
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Dashboard</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -144,11 +139,11 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="flex space-x-2">
-                <Link href="/login">
+                <Link href="/auth/login">
                   <Button variant="ghost">Sign In</Button>
                 </Link>
 
-                <Link href="/register">
+                <Link href="/auth/register">
                   <Button>Get Started</Button>
                 </Link>
               </div>

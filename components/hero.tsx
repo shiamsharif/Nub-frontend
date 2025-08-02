@@ -83,7 +83,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button
                   size="lg"
                   className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all"
@@ -91,7 +91,7 @@ export default function Hero() {
                   Start Managing Tasks
                 </Button>
               </Link>
-              <Link href="/login">
+              <Link href="/auth/login">
                 <Button
                   variant="outline"
                   size="lg"
