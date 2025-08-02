@@ -1,12 +1,12 @@
 "use client";
 
 import { LandingPage } from "@/components/landing-page";
-import { useAuth } from "@/components/auth-provider";
 import { Task, UserDashboard } from "@/components/user-dashboard";
 import { AdminDashboard } from "@/components/admin-dashboard";
+import { useAuth } from "@/context/auth-context";
 
 export default function HomePage() {
-  const { user, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
@@ -52,8 +52,8 @@ export default function HomePage() {
     },
   ];
 
-  if (user) {
-    if (user) {
+  if (isAuthenticated) {
+    if (isAuthenticated) {
       return (
         <AdminDashboard
           tasks={mockTasks}
