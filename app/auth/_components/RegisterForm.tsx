@@ -21,7 +21,13 @@ import useApi from "@/hooks/use-api";
 export function RegisterForm() {
   const { control, handleSubmit } = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {},
+    defaultValues: {
+      username: "",
+      email: "",
+      phone_number: "",
+      applied_for: "Student",
+      password: "",
+    },
   });
 
   const { mutate: register, isLoading } = useApi(
@@ -61,7 +67,9 @@ export function RegisterForm() {
             name="applied_for"
             render={({ field, fieldState }) => (
               <div className="space-y-2">
-                <Label htmlFor="applied_for">Applied For</Label>
+                <Label htmlFor="applied_for">
+                  Applied For <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Select {...field} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select applied for" />

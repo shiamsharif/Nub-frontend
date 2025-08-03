@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Navbar } from "@/components/navbar";
 import {
   Card,
   CardContent,
@@ -19,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TaskDetailDialog } from "@/components/task-detail-dialog";
 import {
   CheckCircle,
   Clock,
@@ -29,28 +27,55 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
-import type { Task } from "@/components/user-dashboard";
-import { useAuth } from "@/components/auth-provider";
+import { TaskDetailDialog } from "./task-detail-dialog";
+import { Task } from "@/schemas/task";
+import { useSession } from "@/hooks/use-session";
 
-interface AdminDashboardProps {
-  tasks: Task[];
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
-  onDeleteTask: (taskId: string) => void;
-}
+const tasks: Task[] = [
+  {
+    id: "1",
+    title: "Network connectivity issue in Lab 1",
+    description:
+      "Students are unable to connect to the internet in Computer Lab 1",
+    status: "pending",
+    priority: "high",
+    createdBy: "john.doe@nub.edu",
+    createdAt: "2024-01-15T10:30:00Z",
+    updatedAt: "2024-01-15T10:30:00Z",
+  },
+  {
+    id: "2",
+    title: "Printer not working in Office 205",
+    description:
+      "The HP LaserJet printer in Office 205 is showing error messages",
+    status: "in-progress",
+    priority: "medium",
+    createdBy: "jane.smith@nub.edu",
+    createdAt: "2024-01-14T14:20:00Z",
+    updatedAt: "2024-01-15T09:15:00Z",
+  },
+  {
+    id: "3",
+    title: "Software installation request",
+    description:
+      "Need to install Adobe Creative Suite on 10 computers in Design Lab",
+    status: "resolved",
+    priority: "low",
+    createdBy: "mike.wilson@nub.edu",
+    createdAt: "2024-01-13T16:45:00Z",
+    updatedAt: "2024-01-14T11:30:00Z",
+  },
+];
 
-export function AdminDashboard({
-  tasks,
-  onUpdateTask,
-  onDeleteTask,
-}: AdminDashboardProps) {
-  const { user } = useAuth();
+export function AdminDashboard() {
+  const { session: user } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleMarkResolved = (taskId: string) => {
-    onUpdateTask(taskId, { status: "resolved" });
+    // onUpdateTask(taskId, { status: "resolved" });
   };
 
   const pendingTasks = tasks.filter((task) => task.status === "pending");
@@ -309,8 +334,8 @@ export function AdminDashboard({
               task={selectedTask}
               open={!!selectedTask}
               onOpenChange={(open) => !open && setSelectedTask(null)}
-              onUpdateTask={onUpdateTask}
-              onDeleteTask={onDeleteTask}
+              onUpdateTask={() => {}}
+              onDeleteTask={() => {}}
               currentUser={user}
             />
           )}

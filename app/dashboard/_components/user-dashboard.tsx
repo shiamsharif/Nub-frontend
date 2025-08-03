@@ -1,27 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/components/auth-provider";
-import { Navbar } from "@/components/navbar";
-import { TaskList } from "@/components/task-list";
-import { CreateTaskDialog } from "@/components/create-task-dialog";
-import { AdminDashboard } from "@/components/admin-dashboard";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: "pending" | "in-progress" | "resolved";
-  priority: "low" | "medium" | "high";
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { AdminDashboard } from "./admin-dashboard";
+import { TaskList } from "./task-list";
+import { CreateTaskDialog } from "./create-task-dialog";
+import { Task } from "@/schemas/task";
+import { useSession } from "@/hooks/use-session";
 
 export function UserDashboard() {
-  const { user } = useAuth();
+  const { session: user } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
@@ -71,7 +60,7 @@ export function UserDashboard() {
     const newTask: Task = {
       ...taskData,
       id: Date.now().toString(),
-      createdBy: user?.email || "",
+      createdBy: (user as any)?.email || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -94,7 +83,7 @@ export function UserDashboard() {
   };
 
   // Show admin dashboard for IT Staff
-  if (user?.role === "ITStaff") {
+  if ((user as any)?.role === "ITStaff") {
     return (
       <AdminDashboard
         tasks={tasks}
@@ -125,7 +114,9 @@ export function UserDashboard() {
           </div>
 
           <TaskList
-            tasks={tasks.filter((task) => task.createdBy === user?.email)}
+            tasks={tasks.filter(
+              (task) => task.createdBy === (user as any)?.email
+            )}
             onUpdateTask={handleUpdateTask}
             onDeleteTask={handleDeleteTask}
             currentUser={user}

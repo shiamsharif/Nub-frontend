@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TaskDetailDialog } from "./task-detail-dialog";
 import { Search, Filter } from "lucide-react";
-import { Task } from "./user-dashboard";
+import { Task } from "@/schemas/task";
+import Link from "next/link";
 
 interface TaskListProps {
   tasks: Task[];
@@ -23,16 +23,10 @@ interface TaskListProps {
   currentUser: any;
 }
 
-export function TaskList({
-  tasks,
-  onUpdateTask,
-  onDeleteTask,
-  currentUser,
-}: TaskListProps) {
+export function TaskList({ tasks }: TaskListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -169,29 +163,15 @@ export function TaskList({
                       </span>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedTask(task)}
-                  >
-                    View Details
-                  </Button>
+                  <Link href={`/dashboard/tasks/${task.id}`}>
+                    <Button variant="outline">View Details</Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
           ))
         )}
       </div>
-
-      {selectedTask && (
-        <TaskDetailDialog
-          task={selectedTask}
-          open={!!selectedTask}
-          onOpenChange={(open) => !open && setSelectedTask(null)}
-          onUpdateTask={onUpdateTask}
-          onDeleteTask={onDeleteTask}
-          currentUser={currentUser}
-        />
-      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { parentVariants, slideVariants } from "@/lib/animate";
+import { slideVariants } from "@/lib/animate";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({

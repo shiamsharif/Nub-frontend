@@ -1,11 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,28 +10,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { forgotPasswordSchema, ForgotPasswordSchemaType } from "@/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import useApi from "@/hooks/use-api";
+import { Controller, useForm } from "react-hook-form";
+import { InputBox } from "@/components/ui/input-box";
 
 export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { control, handleSubmit } = useForm<ForgotPasswordSchemaType>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const { mutate: forgotPassword, isLoading } = useApi(
+    "/account/forgot-password/university/",
+    {
+      method: "POST",
+    }
+  );
+
   const [sent, setSent] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Mock API call
-    setTimeout(() => {
-      setSent(true);
-      setLoading(false);
-      toast({
-        title: "Reset link sent",
-        description: "Check your email for password reset instructions.",
-      });
-    }, 1000);
+  const onSubmit = async (e: ForgotPasswordSchemaType) => {
+    const response = await forgotPassword(e);
+    console.log(response);
+    setSent(true);
   };
 
   if (sent) {
@@ -49,7 +51,7 @@ export function ForgotPasswordForm() {
             </div>
             <CardTitle>Check your email</CardTitle>
             <CardDescription>
-              We've sent a password reset link to {email}
+              We've sent a password reset link to your email address.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -69,20 +71,24 @@ export function ForgotPasswordForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Sending..." : "Send reset link"}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <InputBox
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              {...field}
+              required
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Sending..." : "Send reset link"}
         </Button>
       </form>
       <div className="mt-4 text-center">
