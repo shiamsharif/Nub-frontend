@@ -109,7 +109,7 @@ export default function BlogPage() {
         className="relative py-24 md:py-32 text-center bg-gradient-to-r rom-blue-600 dark:from-zinc-900 to-purple-600 dark:bg-zinc-800 text-gray-50 shadow-lg"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md text-gray-900 dark:text-gray-50">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-900 dark:text-gray-50">
             NUB IT Blog
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-600 dark:text-gray-200">
