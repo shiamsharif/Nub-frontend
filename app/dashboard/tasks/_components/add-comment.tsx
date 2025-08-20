@@ -34,7 +34,7 @@ export default function AddComment({ taskId }: { taskId: number }) {
       <div className="mb-4">
         <label
           htmlFor="comment"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
         >
           Add a comment
         </label>
@@ -44,7 +44,7 @@ export default function AddComment({ taskId }: { taskId: number }) {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Share updates, ask questions, or provide additional information..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
           disabled={isLoading}
         />
       </div>

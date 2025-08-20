@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CommentCard } from "./comment-card";
 import AddComment from "./add-comment";
+import DeleteCommentModal from "./delete-comment";
 
 interface TaskDetailsProps {
   task: Task;
@@ -81,6 +82,8 @@ const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
 };
 
 const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
+  const [open, onOpenChange] = useState<boolean>(false);
+  const [taskId, setTaskId] = useState<number | null>(null);
   const router = useRouter();
 
   const formatDate = (dateString: string) => {
@@ -94,7 +97,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -107,10 +110,10 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
             Back to Tasks
           </Button>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-8">
             <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-4">
                   {task.task_name}
                 </h1>
                 <div className="flex items-center gap-3 mb-4">
@@ -122,54 +125,74 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
 
             {/* Description */}
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Description
               </h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
                 {task.description}
               </p>
             </div>
 
             {/* Equipment Details */}
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Equipment Details
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3 mb-2">
-                    <Monitor size={18} className="text-gray-600" />
-                    <span className="font-medium text-gray-900">Monitor</span>
+                    <Monitor
+                      size={18}
+                      className="text-gray-600 dark:text-gray-100"
+                    />
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      Monitor
+                    </span>
                   </div>
-                  <span className="font-mono text-sm bg-white px-3 py-1 rounded border">
+                  <span className="font-mono text-sm bg-zinc-50 dark:bg-zinc-700 px-3 py-1 rounded border">
                     {task.monitor_id}
                   </span>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3 mb-2">
-                    <HardDrive size={18} className="text-gray-600" />
-                    <span className="font-medium text-gray-900">Computer</span>
+                    <HardDrive
+                      size={18}
+                      className="text-gray-600 dark:text-gray-100"
+                    />
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      Computer
+                    </span>
                   </div>
-                  <span className="font-mono text-sm bg-white px-3 py-1 rounded border">
+                  <span className="font-mono text-sm bg-zinc-50 dark:bg-zinc-700 px-3 py-1 rounded border">
                     {task.computer_id}
                   </span>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3 mb-2">
-                    <Zap size={18} className="text-gray-600" />
-                    <span className="font-medium text-gray-900">UPS</span>
+                    <Zap
+                      size={18}
+                      className="text-gray-600 dark:text-gray-100"
+                    />
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      UPS
+                    </span>
                   </div>
-                  <span className="font-mono text-sm bg-white px-3 py-1 rounded border">
+                  <span className="font-mono text-sm bg-zinc-50 dark:bg-zinc-700 px-3 py-1 rounded border">
                     {task.ups_id}
                   </span>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3 mb-2">
-                    <MapPin size={18} className="text-gray-600" />
-                    <span className="font-medium text-gray-900">Location</span>
+                    <MapPin
+                      size={18}
+                      className="text-gray-600 dark:text-gray-100"
+                    />
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      Location
+                    </span>
                   </div>
                   <span className="text-sm font-medium">
                     Room {task.room_number}
@@ -179,25 +202,31 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
             </div>
 
             {/* Task Information */}
-            <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+            <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <div>
-                <span className="text-sm font-medium text-gray-500">
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-100">
                   Created
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <Calendar size={14} className="text-gray-400" />
-                  <time className="text-sm text-gray-900">
+                  <Calendar
+                    size={14}
+                    className="text-gray-400 dark:text-gray-50"
+                  />
+                  <time className="text-sm text-gray-900 dark:text-gray-200">
                     {formatDate(task.created_at)}
                   </time>
                 </div>
               </div>
               <div>
-                <span className="text-sm font-medium text-gray-500">
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-100">
                   Last Updated
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <Calendar size={14} className="text-gray-400" />
-                  <time className="text-sm text-gray-900">
+                  <Calendar
+                    size={14}
+                    className="text-gray-400 dark:text-gray-50"
+                  />
+                  <time className="text-sm text-gray-900 dark:text-gray-200">
                     {formatDate(task.updated_at)}
                   </time>
                 </div>
@@ -207,10 +236,13 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
         </div>
 
         {/* Comments Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-8">
           <div className="flex items-center gap-2 mb-6">
-            <MessageSquare size={20} className="text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">
+            <MessageSquare
+              size={20}
+              className="text-gray-600 dark:text-gray-100"
+            />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
               Comments ({task.comments.length})
             </h2>
           </div>
@@ -224,20 +256,32 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
               <div className="text-center py-8">
                 <MessageSquare
                   size={48}
-                  className="text-gray-300 mx-auto mb-4"
+                  className="text-gray-300 dark:text-gray-200 mx-auto mb-4"
                 />
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-gray-100">
                   No comments yet. Be the first to add one!
                 </p>
               </div>
             ) : (
               task.comments.map((comment) => (
-                <CommentCard key={comment.id} comment={comment} />
+                <CommentCard
+                  key={comment.id}
+                  comment={comment}
+                  onOpenChange={onOpenChange}
+                  setTaskId={setTaskId}
+                />
               ))
             )}
           </div>
         </div>
       </div>
+
+      <DeleteCommentModal
+        open={open}
+        onOpenChange={onOpenChange}
+        taskId={taskId}
+        setTaskId={setTaskId}
+      />
     </div>
   );
 };

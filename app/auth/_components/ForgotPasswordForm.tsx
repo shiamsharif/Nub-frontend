@@ -26,17 +26,19 @@ export function ForgotPasswordForm() {
   });
 
   const { mutate: forgotPassword, isLoading } = useApi(
-    "/account/forgot-password/university/",
+    "/account/forget-password/",
     {
       method: "POST",
+      requireAuth: true,
     }
   );
 
   const [sent, setSent] = useState(false);
-  const onSubmit = async (e: ForgotPasswordSchemaType) => {
-    const response = await forgotPassword(e);
-    console.log(response);
-    setSent(true);
+  const onSubmit = async (data: ForgotPasswordSchemaType) => {
+    const response = await forgotPassword(data);
+    if (response) {
+      setSent(true);
+    }
   };
 
   if (sent) {
