@@ -1,12 +1,8 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -22,45 +18,52 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Task, taskSchema, TaskSchemaType } from "@/schemas/task";
+import { taskSchema, TaskSchemaType } from "@/schemas/task";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputBox } from "@/components/ui/input-box";
 import { TextAreaBox } from "@/components/ui/textarea-box";
+import useApi from "@/hooks/use-api";
+import { toast } from "sonner";
+import { taskViewRevalidate } from "@/lib/tag-invalidate";
 
 interface CreateTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateTask: (
-    task: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">
-  ) => void;
 }
 
 export function CreateTaskDialog({
   open,
   onOpenChange,
-  onCreateTask,
 }: CreateTaskDialogProps) {
   const { control, handleSubmit } = useForm<TaskSchemaType>({
     resolver: zodResolver(taskSchema),
-    defaultValues: {},
-  });
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: "medium" as "low" | "medium" | "high",
-    status: "pending" as "pending" | "in-progress" | "resolved",
-  });
-
-  const onSubmit = (e: TaskSchemaType) => {
-    onCreateTask(formData);
-    setFormData({
-      title: "",
+    defaultValues: {
+      task_name: "",
       description: "",
-      priority: "medium",
-      status: "pending",
-    });
+      computer_id: "",
+      issues_type: "hardware",
+      monitor_id: "",
+      room_number: "",
+      ups_id: "",
+    },
+  });
+  const { mutate: createTask, isLoading } = useApi("/task/create/", {
+    method: "POST",
+    requireAuth: true,
+  });
+
+  const onSubmit = async (data: TaskSchemaType) => {
+    const response = await createTask(data);
+    if (response) {
+      taskViewRevalidate();
+      toast("Task created successfully!", {
+        icon: "✅",
+        description: "Your task has been created and is now pending review.",
+        duration: 3000,
+      });
+      onOpenChange(false);
+    }
   };
 
   return (
@@ -76,12 +79,12 @@ export function CreateTaskDialog({
           <div className="grid gap-4 py-4">
             <Controller
               control={control}
-              name="title"
+              name="task_name"
               render={({ field, fieldState }) => (
                 <InputBox
-                  label="Title"
+                  label="Task Name"
                   {...field}
-                  placeholder="Enter title"
+                  placeholder="Enter task name"
                   required
                   error={!!fieldState.error}
                   helperText={fieldState.error?.message}
@@ -150,55 +153,29 @@ export function CreateTaskDialog({
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Controller
-                control={control}
-                name="issue_type"
-                render={({ field, fieldState }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="issue_type">
-                      Issue Type <span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <Select {...field} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select issue type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hardware">Hardware</SelectItem>
-                        <SelectItem value="software">Software</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
-                  </div>
-                )}
-              />
-              <Controller
-                control={control}
-                name="status"
-                render={({ field, fieldState }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="status">
-                      Status <span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <Select {...field} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="in-progress">In Progress</SelectItem>
-                        <SelectItem value="resolved">Resolved</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
-                  </div>
-                )}
-              />
-            </div>
+            <Controller
+              control={control}
+              name="issues_type"
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <Label htmlFor="issues_type">
+                    Issue Type <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Select {...field} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select issues type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hardware">Hardware</SelectItem>
+                      <SelectItem value="software">Software</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
 
             <Controller
               control={control}
@@ -223,7 +200,9 @@ export function CreateTaskDialog({
             >
               Cancel
             </Button>
-            <Button type="submit">Create Task</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Creating..." : "Create Task"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

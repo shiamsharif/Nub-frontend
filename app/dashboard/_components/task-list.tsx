@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,57 +12,16 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 import { Task } from "@/schemas/task";
-import Link from "next/link";
+import TaskCard from "./task-card";
 
 interface TaskListProps {
   tasks: Task[];
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
-  onDeleteTask: (taskId: string) => void;
-  currentUser: any;
 }
 
 export function TaskList({ tasks }: TaskListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
-
-  const filteredTasks = tasks.filter((task) => {
-    const matchesSearch =
-      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || task.status === statusFilter;
-    const matchesPriority =
-      priorityFilter === "all" || task.priority === priorityFilter;
-
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "low":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-orange-100 text-orange-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      case "resolved":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -115,7 +72,7 @@ export function TaskList({ tasks }: TaskListProps) {
 
       {/* Task List */}
       <div className="grid gap-4">
-        {filteredTasks.length === 0 ? (
+        {tasks.length === 0 ? (
           <Card className="bg-zinc-50 dark:bg-zinc-800">
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
@@ -133,43 +90,7 @@ export function TaskList({ tasks }: TaskListProps) {
             </CardContent>
           </Card>
         ) : (
-          filteredTasks.map((task) => (
-            <Card
-              key={task.id}
-              className="hover:shadow-md bg-zinc-50 dark:bg-zinc-800 transition-shadow cursor-pointer"
-            >
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 capitalize">
-                        {task.title}
-                      </h3>
-                      <Badge className={getPriorityColor(task.priority)}>
-                        {task.priority}
-                      </Badge>
-                      <Badge className={getStatusColor(task.status)}>
-                        {task.status.replace("-", " ")}
-                      </Badge>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 first-letter:capitalize">
-                      {task.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span>Created by: {task.createdBy}</span>
-                      <span>•</span>
-                      <span>
-                        {new Date(task.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <Link href={`/dashboard/tasks/${task.id}`}>
-                    <Button variant="outline">View Details</Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+          tasks.map((task) => <TaskCard key={task.id} task={task} />)
         )}
       </div>
     </div>

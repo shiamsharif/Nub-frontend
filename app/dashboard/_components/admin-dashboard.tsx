@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { TaskDetailDialog } from "./task-detail-dialog";
 import { Task } from "@/schemas/task";
-import { useSession } from "@/hooks/use-session";
+import { useAuth } from "@/context/auth-context";
 
 const tasks: Task[] = [
   {
@@ -68,7 +68,7 @@ const tasks: Task[] = [
 ];
 
 export function AdminDashboard() {
-  const { session: user } = useSession();
+  const { session: user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
