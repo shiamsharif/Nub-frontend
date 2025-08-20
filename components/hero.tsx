@@ -66,7 +66,7 @@ export default function Hero() {
             >
               Get
               <FlipWords words={["Swift", "Smart", "Sharp"]} />
-              IT Support
+              Nub IT Support
               <span className="block">For a Better Experience</span>
             </motion.h1>
             <motion.p

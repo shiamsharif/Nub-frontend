@@ -26,7 +26,7 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/context/auth-context";
 
 export function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { session, logout } = useAuth();
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
@@ -39,9 +39,6 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-gray-50 font-bold text-sm">IT</span>
-              </div>
               <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
                 NUB IT Support
               </span>
@@ -88,7 +85,7 @@ export function Navbar() {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            {isAuthenticated ? (
+            {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

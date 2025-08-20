@@ -23,7 +23,7 @@ export default function ContactSection() {
             variants={slideVariants}
             className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-4"
           >
-            Get in Touch
+            Contact Us
           </motion.h2>
           <motion.p
             variants={slideVariants}

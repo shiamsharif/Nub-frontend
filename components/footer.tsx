@@ -31,9 +31,6 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-blue-600 font-bold text-lg">IT</span>
-              </div>
               <span className="font-extrabold text-2xl text-white drop-shadow-md">
                 NUB IT Support
               </span>
