@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/auth-context";
-import { useCookies } from "next-client-cookies";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -40,8 +39,7 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
     autoRefresh = true,
   } = options;
 
-  const { token, refreshAuthToken, logout } = useAuth();
-  const cookies = useCookies();
+  const { session, refreshToken, logout } = useAuth();
   const [state, setState] = useState<ApiState<T>>({
     data: null,
     isLoading: false,
@@ -69,15 +67,15 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
       try {
         // Prepare headers
         const requestHeaders: Record<string, string> = { ...headers };
-
+        console.log("Starting");
         // Add auth token if required
         if (requireAuth) {
-          const authToken = token || cookies.get("authToken");
-          if (!authToken) {
-            throw new Error("Authentication required");
-          }
-          requestHeaders["Authorization"] = `Bearer ${authToken}`;
+          // if (!session?.accessToken) {
+          //   throw new Error("Authentication required");
+          // }
+          requestHeaders["Authorization"] = `Bearer ${session?.accessToken}`;
         }
+        console.log("Added Authorization header");
 
         const config: RequestInit = {
           method,
@@ -87,15 +85,18 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
         if (method !== "GET" && (body || executionBody)) {
           config.body = JSON.stringify(executionBody || body);
         }
+        console.log("Config prepared", config);
 
         let response = await fetch(BASE_URL + url, config);
 
+        console.log("Response received", response);
+
         // Handle token refresh if 401 and autoRefresh is enabled
         if (response.status === 401 && autoRefresh && requireAuth) {
-          const newToken = await refreshAuthToken();
+          const newToken = await refreshToken();
           if (newToken) {
             // Retry with new token
-            requestHeaders["Authorization"] = `Bearer ${newToken}`;
+            requestHeaders["Authorization"] = `Bearer ${newToken.accessToken}`;
             response = await fetch(BASE_URL + url, {
               ...config,
               headers: requestHeaders,
@@ -149,12 +150,11 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
       headers,
       onSuccess,
       onError,
-      token,
+      session,
       requireAuth,
       autoRefresh,
-      refreshAuthToken,
+      refreshToken,
       logout,
-      cookies,
     ]
   );
 
@@ -163,7 +163,7 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
     if (method === "GET" && enabled) {
       execute();
     }
-  }, [method, enabled, execute, trigger]);
+  }, [method, enabled, trigger, url]); // remove execute, keep url for refetch
 
   // Mutation function
   const mutate = useCallback(
