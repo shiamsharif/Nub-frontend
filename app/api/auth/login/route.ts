@@ -13,9 +13,12 @@ export async function POST(request: Request) {
     }
 
     // Create the session cookie with the received tokens
-    await createSession(accessToken, refreshToken, expiresIn);
+    const session = await createSession(accessToken, refreshToken, expiresIn);
 
-    return NextResponse.json({ message: "Login successful" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Login successful", session },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Login API error:", error);
     return NextResponse.json(

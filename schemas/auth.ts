@@ -21,7 +21,7 @@ export type Role = "Teacher" | "Student" | "Staff" | "ItStaff";
 // Login Schema
 export const loginSchema = z.object({
   email: z.string().email().toLowerCase(),
-  password: z.string(),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 // Login Type

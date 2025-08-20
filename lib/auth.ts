@@ -1,6 +1,7 @@
 import "server-only"; // Ensures this code only runs on the server [^3]
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 // Define the shape of your session payload
 export interface SessionPayload {
@@ -69,6 +70,8 @@ export async function createSession(
     sameSite: "lax", // Recommended for CSRF protection [^3]
     path: "/", // Cookie is available across the entire site [^3]
   });
+
+  return session;
 }
 
 /**
@@ -83,9 +86,9 @@ export async function deleteSession() {
  * Retrieves and decrypts the session from the cookie.
  * @returns A promise that resolves to the session payload or null if no valid session exists.
  */
-export async function getSession(): Promise<JWTPayload | null> {
+export const getSession = cache(async function (): Promise<JWTPayload | null> {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
   if (!session) return null;
   return decrypt(session);
-}
+});

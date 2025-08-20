@@ -1,93 +1,105 @@
-// src/context/auth-context.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { useCookies } from "next-client-cookies";
-import { useRouter } from "next/navigation";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { SessionPayload } from "@/lib/auth";
 
 type AuthContextType = {
-  isAuthenticated: boolean;
-  token: string | null;
-  refreshToken: string | null;
-  loading: boolean;
-  login: (token: string, refreshToken: string) => void;
-  logout: () => void;
-  refreshAuthToken: () => Promise<string | null>;
+  session: SessionPayload | null;
+  isLoading: boolean;
+  error: string | null;
+  logout: () => Promise<void>;
+  refreshToken: () => Promise<SessionPayload | null>;
+  setSession: (session: SessionPayload | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const cookies = useCookies();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [session, setSession] = useState<SessionPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Initialize from cookies on mount
-    const tokenFromCookie = cookies.get("authToken");
-    const refreshTokenFromCookie = cookies.get("refreshToken");
-
-    if (tokenFromCookie) setToken(tokenFromCookie);
-    if (refreshTokenFromCookie) setRefreshToken(refreshTokenFromCookie);
-
-    setLoading(false);
+  const fetchSession = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/auth/session");
+      if (response.ok) {
+        const data: SessionPayload = await response.json();
+        setSession(data);
+      } else if (response.status === 401) {
+        setSession(null); // Not authenticated
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to fetch session");
+        setSession(null);
+      }
+    } catch (err) {
+      console.error("Error fetching session:", err);
+      setError("Network error or server unreachable");
+      setSession(null);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const login = (newToken: string, newRefreshToken: string) => {
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
-    cookies.set("authToken", newToken, { path: "/" });
-    cookies.set("refreshToken", newRefreshToken, { path: "/" });
-  };
+  useEffect(() => {
+    fetchSession();
+  }, [fetchSession]);
 
-  const logout = () => {
-    setToken(null);
-    setRefreshToken(null);
-    cookies.remove("authToken");
-    cookies.remove("refreshToken");
-    router.push("/login");
-  };
-
-  const refreshAuthToken = async (): Promise<string | null> => {
-    if (!refreshToken) {
-      logout();
-      return null;
-    }
-
+  const logout = useCallback(async () => {
     try {
-      const response = await fetch("/api/auth/refresh", {
+      await fetch("/api/auth/logout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken }),
       });
+      setSession(null);
+    } catch (err) {
+      console.error("Error logging out:", err);
+    }
+  }, []);
 
-      if (!response.ok) {
-        throw new Error("Token refresh failed");
+  const refreshToken = useCallback(async () => {
+    try {
+      const response = await fetch("/api/auth/refresh");
+      if (response.ok) {
+        const data: SessionPayload = await response.json();
+        setSession(data);
+        return data;
+      } else if (response.status === 401) {
+        setSession(null); // Not authenticated
+        await logout();
+        return null;
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to refresh token");
+        setSession(null);
+        await logout();
+        return null;
       }
-
-      const data = await response.json();
-      login(data.token, data.refreshToken);
-      return data.token;
-    } catch (error) {
-      logout();
+    } catch (err) {
+      console.error("Error refreshing token:", err);
+      setError("Network error or server unreachable");
+      setSession(null);
+      await logout();
       return null;
     }
-  };
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: !!token,
-        token,
+        session,
+        isLoading,
+        error,
         refreshToken,
-        login,
         logout,
-        refreshAuthToken,
-        loading,
+        setSession,
       }}
     >
       {children}
