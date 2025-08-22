@@ -1,4 +1,5 @@
 import useApi from "@/hooks/use-api";
+import { taskDetailsRevalidate } from "@/lib/tag-invalidate";
 import { Send } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -7,7 +8,7 @@ export default function AddComment({ taskId }: { taskId: number }) {
   const [newComment, setNewComment] = useState("");
 
   const { mutate: onAddComment, isLoading } = useApi(
-    `/task/comments/${taskId}/`,
+    `/task/${taskId}/comments/new/`,
     {
       method: "POST",
       requireAuth: true,
@@ -20,10 +21,15 @@ export default function AddComment({ taskId }: { taskId: number }) {
 
     const response = await onAddComment({ body: newComment.trim() });
     if (response) {
+      taskDetailsRevalidate(taskId);
       toast("Comment added successfully!", {
         icon: "✅",
         description: "Your comment has been posted.",
         duration: 3000,
+        action: {
+          label: "Dismiss",
+          onClick: () => toast.dismiss(),
+        },
       });
       setNewComment("");
     }

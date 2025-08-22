@@ -5,20 +5,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useApi from "@/hooks/use-api";
-import { Comment } from "@/schemas/task";
+import { Comment, OpenStateType } from "@/schemas/task";
 import { EllipsisVertical, SquarePen, Trash2, User } from "lucide-react";
 
 type CommentCardProps = {
   comment: Comment;
-  onOpenChange: (open: boolean) => void;
-  setTaskId: (taskId: number | null) => void;
+  onOpenStateChange: (openState: OpenStateType) => void;
+  setComment: (comment: Comment | null) => void;
 };
 
 export const CommentCard: React.FC<CommentCardProps> = ({
   comment,
-  onOpenChange,
-  setTaskId,
+  onOpenStateChange,
+  setComment,
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -56,14 +55,19 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setComment(comment);
+                onOpenStateChange("edit");
+              }}
+            >
               <SquarePen className="mr-2 stroke-blue-500" />
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                setTaskId(comment.id);
-                onOpenChange(true);
+                setComment(comment);
+                onOpenStateChange("delete");
               }}
             >
               <Trash2 className="mr-2 stroke-red-500" />

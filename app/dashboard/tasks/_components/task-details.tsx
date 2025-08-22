@@ -10,16 +10,15 @@ import {
   Clock,
   ArrowLeft,
   MessageSquare,
-  Send,
-  User,
 } from "lucide-react";
-import { Comment, Task } from "@/schemas/task";
+import { Comment, OpenStateType, Task } from "@/schemas/task";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CommentCard } from "./comment-card";
 import AddComment from "./add-comment";
 import DeleteCommentModal from "./delete-comment";
+import EditComment from "./edit-comment";
 
 interface TaskDetailsProps {
   task: Task;
@@ -31,7 +30,7 @@ const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
       color: "bg-amber-100 text-amber-800 border-amber-200",
       icon: Clock,
     },
-    "in-progress": {
+    in_progress: {
       color: "bg-blue-100 text-blue-800 border-blue-200",
       icon: AlertCircle,
     },
@@ -82,8 +81,8 @@ const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
 };
 
 const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
-  const [open, onOpenChange] = useState<boolean>(false);
-  const [taskId, setTaskId] = useState<number | null>(null);
+  const [openState, setOpenState] = useState<OpenStateType | null>(null);
+  const [comment, setComment] = useState<Comment | null>(null);
   const router = useRouter();
 
   const formatDate = (dateString: string) => {
@@ -267,8 +266,8 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                 <CommentCard
                   key={comment.id}
                   comment={comment}
-                  onOpenChange={onOpenChange}
-                  setTaskId={setTaskId}
+                  onOpenStateChange={setOpenState}
+                  setComment={setComment}
                 />
               ))
             )}
@@ -276,11 +275,22 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
         </div>
       </div>
 
+      <EditComment
+        key={`edit-comment-${comment?.id}`}
+        open={openState === "edit"}
+        onOpenChange={setOpenState}
+        taskId={task.id}
+        comment={comment}
+        setComment={setComment}
+      />
+
       <DeleteCommentModal
-        open={open}
-        onOpenChange={onOpenChange}
-        taskId={taskId}
-        setTaskId={setTaskId}
+        key={`delete-comment-${comment?.id}`}
+        open={openState === "delete"}
+        onOpenChange={setOpenState}
+        taskId={task.id}
+        commentId={comment?.id}
+        setComment={setComment}
       />
     </div>
   );
