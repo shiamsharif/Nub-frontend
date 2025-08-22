@@ -90,7 +90,7 @@ export const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
     return (
       <div className="w-full space-y-2">
         {label && (
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
