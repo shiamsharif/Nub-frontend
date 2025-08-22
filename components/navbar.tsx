@@ -19,6 +19,7 @@ import {
   Info,
   Sun,
   Moon,
+  LockKeyholeOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -113,13 +114,17 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuItem asChild>
+                    <Link href={"/dashboard/profile"}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem asChild>
+                    <Link href={"/dashboard/reset-password"}>
+                      <LockKeyholeOpen className="mr-2 h-4 w-4" />
+                      <span>Reset Password</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard">
