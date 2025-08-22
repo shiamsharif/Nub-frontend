@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,8 +16,10 @@ import { registerSchema, RegisterSchemaType } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputBox } from "@/components/ui/input-box";
 import useApi from "@/hooks/use-api";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
+  const router = useRouter();
   const { control, handleSubmit } = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -27,6 +28,7 @@ export function RegisterForm() {
       phone_number: "",
       applied_for: "Student",
       password: "",
+      university_id: "",
     },
   });
 
@@ -36,11 +38,12 @@ export function RegisterForm() {
       method: "POST",
     }
   );
-  const router = useRouter();
 
   const onSubmit = async (data: RegisterSchemaType) => {
     const response = await register(data);
-    console.log(response);
+    if (response) {
+      router.push("/auth/verify-email");
+    }
   };
 
   return (
@@ -75,10 +78,8 @@ export function RegisterForm() {
                     <SelectValue placeholder="Select applied for" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Teacher">Teacher</SelectItem>
                     <SelectItem value="Student">Student</SelectItem>
                     <SelectItem value="Staff">Staff</SelectItem>
-                    <SelectItem value="ItStaff">IT Staff</SelectItem>
                   </SelectContent>
                 </Select>
                 {fieldState.error && (
@@ -88,6 +89,21 @@ export function RegisterForm() {
             )}
           />
         </div>
+
+        <Controller
+          control={control}
+          name="university_id"
+          render={({ field, fieldState }) => (
+            <InputBox
+              label="University ID"
+              placeholder="Enter your university ID"
+              {...field}
+              required
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
 
         <Controller
           control={control}

@@ -10,6 +10,7 @@ import useApi from "@/hooks/use-api";
 import { InputBox } from "@/components/ui/input-box";
 import { toast } from "sonner";
 import { useAuth } from "@/context/auth-context";
+import { SessionPayload } from "@/lib/auth";
 
 export default function LoginForm() {
   const { control, handleSubmit } = useForm<LoginSchemaType>({
@@ -53,11 +54,13 @@ export default function LoginForm() {
             icon: "✅",
             duration: 3000,
           });
-          setSession(result);
+          console.log("Session From Login:", result);
+          setSession(result?.payload as SessionPayload);
           router.push("/dashboard");
         }
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast("Failed to login", {
         icon: "❌",
         duration: 3000,

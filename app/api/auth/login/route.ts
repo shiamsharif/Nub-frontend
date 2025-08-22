@@ -13,10 +13,16 @@ export async function POST(request: Request) {
     }
 
     // Create the session cookie with the received tokens
-    const session = await createSession(accessToken, refreshToken, expiresIn);
+    await createSession(accessToken, refreshToken, expiresIn);
+
+    const payload = {
+      accessToken,
+      refreshToken,
+      expiresIn,
+    };
 
     return NextResponse.json(
-      { message: "Login successful", session },
+      { message: "Login successful", payload },
       { status: 200 }
     );
   } catch (error) {
