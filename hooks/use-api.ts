@@ -67,16 +67,13 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
       try {
         // Prepare headers
         const requestHeaders: Record<string, string> = { ...headers };
-        console.log("Starting");
         // Add auth token if required
         if (requireAuth) {
-          // if (!session?.accessToken) {
-          //   throw new Error("Authentication required");
-          // }
+          if (!session?.accessToken) {
+            throw new Error("Authentication required");
+          }
           requestHeaders["Authorization"] = `Bearer ${session?.accessToken}`;
         }
-        console.log("Added Authorization header");
-
         const config: RequestInit = {
           method,
           headers: requestHeaders,
@@ -85,11 +82,8 @@ const useApi = <T>(url: string, options: ApiOptions<T> = {}) => {
         if (method !== "GET" && (body || executionBody)) {
           config.body = JSON.stringify(executionBody || body);
         }
-        console.log("Config prepared", config);
 
         let response = await fetch(BASE_URL + url, config);
-
-        console.log("Response received", response);
 
         // Handle token refresh if 401 and autoRefresh is enabled
         if (response.status === 401 && autoRefresh && requireAuth) {

@@ -9,4 +9,8 @@ const taskDetailsRevalidate = (taskId: number) => {
   revalidateTag(`task-details-${taskId}`);
 };
 
-export { taskViewRevalidate, taskDetailsRevalidate };
+const userProfileRevalidate = () => {
+  revalidateTag("user-profile");
+};
+
+export { taskViewRevalidate, taskDetailsRevalidate, userProfileRevalidate };

@@ -39,3 +39,5 @@ export type Task = TaskSchemaType & {
   status: string;
   comments: Comment[];
 };
+
+export type OpenStateType = "edit" | "delete";
