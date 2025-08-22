@@ -1,7 +1,18 @@
 "use client";
-
-import type React from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import useApi from "@/hooks/use-api";
+import { taskViewRevalidate } from "@/lib/tag-invalidate";
+import { OpenStateType, Task } from "@/schemas/task";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -10,57 +21,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { taskSchema, TaskSchemaType } from "@/schemas/task";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputBox } from "@/components/ui/input-box";
 import { TextAreaBox } from "@/components/ui/textarea-box";
-import useApi from "@/hooks/use-api";
-import { toast } from "sonner";
-import { taskViewRevalidate } from "@/lib/tag-invalidate";
+import { useCallback } from "react";
 
-interface CreateTaskDialogProps {
+type EditTaskModalProps = {
+  task: Task | null;
+  setTask: (task: null) => void;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+  onOpenChange: (openState: OpenStateType | null) => void;
+};
 
-export function CreateTaskDialog({
+export default function EditTaskModal({
+  task,
   open,
   onOpenChange,
-}: CreateTaskDialogProps) {
-  const { control, handleSubmit } = useForm<TaskSchemaType>({
+  setTask,
+}: EditTaskModalProps) {
+  if (!task) {
+    return null;
+  }
+  const { control, handleSubmit, watch } = useForm<TaskSchemaType>({
     resolver: zodResolver(taskSchema),
-    defaultValues: {
-      task_name: "",
-      description: "",
-      computer_id: "",
-      issues_type: "hardware",
-      monitor_id: "",
-      room_number: "",
-      ups_id: "",
+    mode: "onChange",
+    values: {
+      task_name: task.task_name,
+      description: task.description,
+      computer_id: task.computer_id,
+      issues_type: task.issues_type,
+      monitor_id: task.monitor_id,
+      room_number: task.room_number,
+      ups_id: task.ups_id,
     },
   });
-  const { mutate: createTask, isLoading } = useApi("/task/create/", {
-    method: "POST",
+
+  const { mutate: updateTask, isLoading } = useApi(`/task/update/${task.id}/`, {
+    method: "PUT",
     requireAuth: true,
   });
 
-  const onSubmit = async (data: TaskSchemaType) => {
-    const response = await createTask(data);
+  const isChanged = useCallback(() => {
+    return (
+      task.task_name !== watch("task_name") ||
+      task.description !== watch("description") ||
+      task.computer_id !== watch("computer_id") ||
+      task.issues_type !== watch("issues_type") ||
+      task.monitor_id !== watch("monitor_id") ||
+      task.room_number !== watch("room_number") ||
+      task.ups_id !== watch("ups_id")
+    );
+  }, []);
+
+  const onSubmit = async (payload: TaskSchemaType) => {
+    const response = await updateTask(payload);
     if (response) {
+      onOpenChange(null);
       taskViewRevalidate();
-      onOpenChange(false);
-      toast("Task created successfully!", {
+      toast("Task updated successfully!", {
         icon: "✅",
-        description: "Your task has been created and is now pending review.",
+        description: "Your task has been updated.",
         duration: 3000,
         action: {
           label: "Dismiss",
@@ -71,15 +93,26 @@ export function CreateTaskDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
-        <DialogHeader>
-          <DialogTitle>Create New Task</DialogTitle>
-          <DialogDescription>
-            Create a new IT support task. Fill in the details below.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) {
+          setTask(null);
+          onOpenChange(null);
+        } else {
+          onOpenChange("delete");
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+            <DialogDescription>
+              Make changes to your task and save them.
+            </DialogDescription>
+          </DialogHeader>
+
           <div className="grid gap-4 py-4">
             <Controller
               control={control}
@@ -196,16 +229,13 @@ export function CreateTaskDialog({
               )}
             />
           </div>
+
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Task"}
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button disabled={isLoading || !isChanged()} type="submit">
+              {isLoading ? "Saving..." : "Save changes"}
             </Button>
           </DialogFooter>
         </form>

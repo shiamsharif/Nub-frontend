@@ -9,10 +9,19 @@ import {
   CheckCircle,
   Clock,
   Eye,
+  EllipsisVertical,
+  SquarePen,
+  Trash2,
 } from "lucide-react";
-import { Task } from "@/schemas/task";
+import { OpenStateType, Task } from "@/schemas/task";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
   const statusConfig: Record<
@@ -23,7 +32,7 @@ const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
       color: "bg-amber-100 text-amber-800 border-amber-200",
       icon: Clock,
     },
-    "in-progress": {
+    in_progress: {
       color: "bg-blue-100 text-blue-800 border-blue-200",
       icon: AlertCircle,
     },
@@ -73,7 +82,17 @@ const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
   );
 };
 
-const TaskCard: React.FC<{ task: Task }> = ({ task }) => {
+type TaskCardProps = {
+  task: Task;
+  onOpenStateChange: (openState: OpenStateType) => void;
+  setTask: (task: Task | null) => void;
+};
+
+const TaskCard: React.FC<TaskCardProps> = ({
+  onOpenStateChange,
+  setTask,
+  task,
+}) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -97,6 +116,33 @@ const TaskCard: React.FC<{ task: Task }> = ({ task }) => {
             <IssueTypeBadge type={task.issues_type} />
           </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant={"ghost"} className="h-8 w-8 p-0">
+              <EllipsisVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() => {
+                setTask(task);
+                onOpenStateChange("edit");
+              }}
+            >
+              <SquarePen className="mr-2 stroke-blue-500" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setTask(task);
+                onOpenStateChange("delete");
+              }}
+            >
+              <Trash2 className="mr-2 stroke-red-500" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Description */}

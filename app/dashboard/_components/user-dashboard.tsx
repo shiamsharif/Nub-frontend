@@ -6,8 +6,9 @@ import { Plus } from "lucide-react";
 import { TaskList } from "./task-list";
 import { CreateTaskDialog } from "./create-task-dialog";
 import { Task } from "@/schemas/task";
+import TaskFilterOption from "./task-filter-option";
 
-export function UserDashboard({ tasks }: { tasks: Task[] }) {
+export function UserDashboard({ data }: { data: Result<Task> }) {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   return (
@@ -28,8 +29,12 @@ export function UserDashboard({ tasks }: { tasks: Task[] }) {
               Create Task
             </Button>
           </div>
+          <div className="space-y-6">
+            {/* Filters */}
+            <TaskFilterOption count={data.count} />
 
-          <TaskList tasks={tasks} />
+            <TaskList tasks={data.results} />
+          </div>
 
           <CreateTaskDialog
             open={createDialogOpen}

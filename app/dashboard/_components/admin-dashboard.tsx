@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,119 +7,106 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   CheckCircle,
   Clock,
-  AlertTriangle,
-  Search,
-  Filter,
   Users,
   TrendingUp,
+  HardDrive,
+  Monitor,
+  AlertCircle,
+  EllipsisVertical,
+  SquarePen,
+  Trash2,
 } from "lucide-react";
-import { TaskDetailDialog } from "./task-detail-dialog";
-import { Task } from "@/schemas/task";
-import { useAuth } from "@/context/auth-context";
+import { OpenStateType, Task } from "@/schemas/task";
+import TaskFilterOption from "./task-filter-option";
+import Link from "next/link";
+import MarkAsResolved from "./mark-as-resolved";
+import { useState } from "react";
+import EditTaskModal from "./edit-task-modal";
+import DeleteTaskModal from "./delete-task-modal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const tasks: Task[] = [
-  {
-    id: "1",
-    title: "Network connectivity issue in Lab 1",
-    description:
-      "Students are unable to connect to the internet in Computer Lab 1",
-    status: "pending",
-    priority: "high",
-    createdBy: "john.doe@nub.edu",
-    createdAt: "2024-01-15T10:30:00Z",
-    updatedAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: "2",
-    title: "Printer not working in Office 205",
-    description:
-      "The HP LaserJet printer in Office 205 is showing error messages",
-    status: "in-progress",
-    priority: "medium",
-    createdBy: "jane.smith@nub.edu",
-    createdAt: "2024-01-14T14:20:00Z",
-    updatedAt: "2024-01-15T09:15:00Z",
-  },
-  {
-    id: "3",
-    title: "Software installation request",
-    description:
-      "Need to install Adobe Creative Suite on 10 computers in Design Lab",
-    status: "resolved",
-    priority: "low",
-    createdBy: "mike.wilson@nub.edu",
-    createdAt: "2024-01-13T16:45:00Z",
-    updatedAt: "2024-01-14T11:30:00Z",
-  },
-];
+const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
+  const statusConfig: Record<
+    NonNullable<Task["status"]>,
+    { color: string; icon: React.ElementType }
+  > = {
+    pending: {
+      color: "bg-amber-100 text-amber-800 border-amber-200",
+      icon: Clock,
+    },
+    in_progress: {
+      color: "bg-blue-100 text-blue-800 border-blue-200",
+      icon: AlertCircle,
+    },
+    resolved: {
+      color: "bg-green-100 text-green-800 border-green-200",
+      icon: CheckCircle,
+    },
+  };
 
-export function AdminDashboard() {
-  const { session: user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const config = statusConfig[status as keyof typeof statusConfig];
+  const Icon = config ? config.icon : null;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.color}`}
+    >
+      {Icon && <Icon size={12} />}
+      {status.replace("-", " ")}
+    </span>
+  );
+};
+
+const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
+  const config = {
+    hardware: {
+      color: "bg-red-50 text-red-700 border-red-200",
+      icon: HardDrive,
+    },
+    software: {
+      color: "bg-purple-50 text-purple-700 border-purple-200",
+      icon: Monitor,
+    },
+  };
+
+  const typeConfig = config[type];
+  const Icon = typeConfig ? typeConfig.icon : Monitor;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
+        typeConfig?.color ?? "bg-purple-50 text-purple-700 border-purple-200"
+      }`}
+    >
+      {Icon && <Icon size={12} />}
+      {type}
+    </span>
+  );
+};
+
+export function AdminDashboard({ tasks }: { tasks: Result<Task> }) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [openState, setOpenState] = useState<OpenStateType | null>(null);
+  const pendingTasks = tasks.results.filter(
+    (task) => task.status === "pending"
+  );
+  const inProgressTasks = tasks.results.filter(
+    (task) => task.status === "in_progress"
+  );
+  const resolvedTasks = tasks.results.filter(
+    (task) => task.status === "resolved"
+  );
 
-  const handleMarkResolved = (taskId: string) => {
-    // onUpdateTask(taskId, { status: "resolved" });
-  };
-
-  const pendingTasks = tasks.filter((task) => task.status === "pending");
-  const inProgressTasks = tasks.filter((task) => task.status === "in-progress");
-  const resolvedTasks = tasks.filter((task) => task.status === "resolved");
-  const highPriorityTasks = tasks.filter((task) => task.priority === "high");
-
-  const filteredTasks = tasks.filter((task) => {
-    const matchesSearch =
-      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || task.status === statusFilter;
-    const matchesPriority =
-      priorityFilter === "all" || task.priority === priorityFilter;
-
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "low":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-orange-100 text-orange-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      case "resolved":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  console.log(tasks);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
@@ -136,7 +122,7 @@ export function AdminDashboard() {
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <Card className="bg-zinc-50 dark:bg-zinc-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -187,84 +173,22 @@ export function AdminDashboard() {
                 </p>
               </CardContent>
             </Card>
-
-            <Card className="bg-zinc-50 dark:bg-zinc-800">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  High Priority
-                </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-red-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-red-600">
-                  {highPriorityTasks.length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Urgent attention needed
-                </p>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Filters */}
-          <Card className="mb-6 bg-zinc-50 dark:bg-zinc-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5" />
-                Search & Filter Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search tasks, users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-zinc-50 dark:bg-zinc-900"
-                  />
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in-progress">In Progress</SelectItem>
-                    <SelectItem value="resolved">Resolved</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={priorityFilter}
-                  onValueChange={setPriorityFilter}
-                >
-                  <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-                    <SelectValue placeholder="Filter by priority" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
-                    <SelectItem value="all">All Priority</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+          <TaskFilterOption count={tasks.count} />
 
           {/* Task List */}
-          <Card className="bg-zinc-50 dark:bg-zinc-800">
+          <Card className="bg-zinc-50 dark:bg-zinc-800 mt-3">
             <CardHeader>
-              <CardTitle>All Tasks ({filteredTasks.length})</CardTitle>
+              <CardTitle>All Tasks ({tasks.count})</CardTitle>
               <CardDescription>
                 Manage all IT support tasks from this dashboard
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {filteredTasks.length === 0 ? (
+                {tasks.results.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-gray-500 text-lg">No tasks found</p>
                     <p className="text-gray-400 text-sm mt-2">
@@ -272,7 +196,7 @@ export function AdminDashboard() {
                     </p>
                   </div>
                 ) : (
-                  filteredTasks.map((task) => (
+                  tasks.results.map((task) => (
                     <div
                       key={task.id}
                       className="border dark:border-zinc-700 rounded-lg p-4 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
@@ -280,13 +204,9 @@ export function AdminDashboard() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold">{task.title}</h3>
-                            <Badge className={getPriorityColor(task.priority)}>
-                              {task.priority}
-                            </Badge>
-                            <Badge className={getStatusColor(task.status)}>
-                              {task.status.replace("-", " ")}
-                            </Badge>
+                            <h3 className="font-semibold">{task.task_name}</h3>
+                            <StatusBadge status={task.status} />
+                            <IssueTypeBadge type={task.issues_type} />
                           </div>
                           <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-1">
                             {task.description}
@@ -294,32 +214,54 @@ export function AdminDashboard() {
                           <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                             <span className="flex items-center gap-1 ">
                               <Users className="w-3 h-3" />
-                              {task.createdBy}
+                              {task.user}
                             </span>
                             <span>•</span>
                             <span>
-                              {new Date(task.createdAt).toLocaleDateString()}
+                              {new Intl.DateTimeFormat("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }).format(new Date(task.created_at))}
                             </span>
                           </div>
                         </div>
                         <div className="flex gap-2">
                           {task.status !== "resolved" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleMarkResolved(task.id)}
-                            >
-                              <CheckCircle className="w-4 h-4 mr-2" />
-                              Mark Resolved
-                            </Button>
+                            <MarkAsResolved taskId={task.id} />
                           )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedTask(task)}
-                          >
-                            View Details
-                          </Button>
+                          <Link href={`/dashboard/tasks/${task.id}`}>
+                            <Button variant="outline" size="sm">
+                              View Details
+                            </Button>
+                          </Link>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant={"ghost"} className="h-8 w-8 p-0">
+                                <EllipsisVertical />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedTask(task);
+                                  setOpenState("edit");
+                                }}
+                              >
+                                <SquarePen className="mr-2 stroke-blue-500" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedTask(task);
+                                  setOpenState("delete");
+                                }}
+                              >
+                                <Trash2 className="mr-2 stroke-red-500" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>
@@ -329,16 +271,21 @@ export function AdminDashboard() {
             </CardContent>
           </Card>
 
-          {selectedTask && (
-            <TaskDetailDialog
-              task={selectedTask}
-              open={!!selectedTask}
-              onOpenChange={(open) => !open && setSelectedTask(null)}
-              onUpdateTask={() => {}}
-              onDeleteTask={() => {}}
-              currentUser={user}
-            />
-          )}
+          <EditTaskModal
+            key={`edit-${selectedTask?.id}`}
+            task={selectedTask}
+            open={openState === "edit"}
+            onOpenChange={setOpenState}
+            setTask={setSelectedTask}
+          />
+
+          <DeleteTaskModal
+            key={`delete-${selectedTask?.id}`}
+            taskId={selectedTask?.id}
+            open={openState === "delete"}
+            onOpenChange={setOpenState}
+            setTask={setSelectedTask}
+          />
         </div>
       </main>
     </div>
