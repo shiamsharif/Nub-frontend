@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 // Register Schema
-const appliedForSchema = z.enum(["Student", "Staff"], {
+const appliedForSchema = z.enum(["Student", "ItStaff", "Teacher", "Staff"], {
   required_error: "Applied for is required",
 });
 
@@ -25,7 +25,7 @@ export const registerSchema = z.object({
 
 // Registration Type
 export type RegisterSchemaType = z.infer<typeof registerSchema>;
-export type Role = "Teacher" | "Student" | "Staff" | "ItStaff";
+export type Role = z.infer<typeof registerSchema>["applied_for"];
 
 // Login Schema
 export const loginSchema = z.object({
@@ -104,7 +104,7 @@ export type User = {
   university_id: string;
   first_name: string;
   last_name: string;
-  user_type: "Student" | "Staff";
+  user_type: Role;
   is_varified: boolean;
   registration_date: string;
   last_login: string;

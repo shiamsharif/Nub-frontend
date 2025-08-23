@@ -1,33 +1,14 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Coffee,
-  User,
-  LogOut,
-  Settings,
-  BookOpen,
-  Info,
-  Sun,
-  Moon,
-  LockKeyholeOpen,
-} from "lucide-react";
+import { Coffee, BookOpen, Info, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/context/auth-context";
+import UserProfileDropdown from "./user-profile-dropdown";
 
 export function Navbar() {
-  const { session, logout } = useAuth();
+  const { session } = useAuth();
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
@@ -87,58 +68,7 @@ export function Navbar() {
             </Button>
 
             {session ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
-                  >
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder-user.jpg" alt={"Gues"} />
-                      <AvatarFallback>{"Gues".charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {"Gues"}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        user@nub.ac.bd
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        Student
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={"/dashboard/profile"}>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={"/dashboard/reset-password"}>
-                      <LockKeyholeOpen className="mr-2 h-4 w-4" />
-                      <span>Reset Password</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserProfileDropdown />
             ) : (
               <div className="flex space-x-2">
                 <Link href="/auth/login">

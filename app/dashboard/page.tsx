@@ -26,7 +26,7 @@ export default async function DashboardPage({
 
   const user = await getUserProfile((session as any).accessToken);
 
-  if (user?.user_type === "Student") {
+  if (user?.user_type === "Student" || user?.user_type === "Staff") {
     const tasksForStudent = await fetchTaskList({
       endpoint: "listView",
       accessToken: (session as any).accessToken,
