@@ -65,23 +65,6 @@ export default function TaskFilterOption({ count }: { count: number }) {
             >
               Previous
             </Button>
-            <Select
-              value={`${page_size}`}
-              onValueChange={(value) => {
-                onChangeSearchParams("page_size", value);
-              }}
-            >
-              <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-                <SelectValue placeholder="Page size" />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Button
               variant="outline"
               disabled={isNextDisabled}

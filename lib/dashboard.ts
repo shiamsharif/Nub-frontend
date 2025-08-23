@@ -22,7 +22,7 @@ export async function fetchTaskList({
   try {
     const params = new URLSearchParams({
       page,
-      page_size,
+      limit: page_size,
     });
     if (statusFilter && statusFilter !== "all")
       params.set("status", statusFilter);
@@ -45,7 +45,7 @@ export async function fetchTaskList({
         },
       }
     );
-    console.log("Response status:", response);
+    // console.log("Response status:", response);
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
     }

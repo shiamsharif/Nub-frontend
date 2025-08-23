@@ -54,7 +54,7 @@ export default function LoginForm() {
             icon: "✅",
             duration: 3000,
           });
-          console.log("Session From Login:", result);
+          // console.log("Session From Login:", result);
           setSession(result?.payload as SessionPayload);
           router.push("/dashboard");
         }
