@@ -5,12 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Users, Zap, Shield } from "lucide-react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { FlipWords } from "./ui/flip-words";
-import { parentVariants, slideVariants } from "@/lib/animate";
+import { slideVariants } from "@/lib/animate";
 
 export default function Hero() {
   const sectionVariants: Variants = {
@@ -48,7 +47,7 @@ export default function Hero() {
         initial="initial"
         whileInView={"animate"}
         viewport={{ once: true, amount: 0.8 }}
-        variants={parentVariants}
+        variants={sectionVariants}
         className="relative overflow-hidden py-24 md:py-32"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,56 +1,41 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import { Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { slideVariants } from "@/lib/animate";
+import { Controller, useForm } from "react-hook-form";
+import { contactUsSchema, ContactUsSchema } from "@/schemas/contact-us";
+import { zodResolver } from "@hookform/resolvers/zod";
+import useApi from "@/hooks/use-api";
 
 export function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
+  const { control, handleSubmit, reset } = useForm<ContactUsSchema>({
+    resolver: zodResolver(contactUsSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      body: "",
+    },
   });
-  const [loading, setLoading] = useState(false);
+
   const [submitted, setSubmitted] = useState(false);
-  const { toast } = useToast();
+  const { mutate: contactUsForm, isLoading } = useApi("/task/contact-us/", {
+    method: "POST",
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Mock form submission - replace with actual API call
-    setTimeout(() => {
+  const onSubmit = async (data: ContactUsSchema) => {
+    const response = await contactUsForm(data);
+    if (response) {
       setSubmitted(true);
-      setLoading(false);
-      toast({
-        title: "Message sent successfully!",
-        description: "We'll get back to you within 24 hours.",
-      });
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setSubmitted(false);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          message: "",
-        });
-      }, 3000);
-    }, 1500);
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+      reset();
+    }
   };
 
   if (submitted) {
@@ -66,59 +51,90 @@ export function ContactForm() {
           Thank you for contacting us. We'll respond to your inquiry within 24
           hours.
         </p>
+        <Button className="mt-4" onClick={() => setSubmitted(false)}>
+          Go back
+        </Button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <motion.div variants={slideVariants} className="space-y-2">
-          <Label htmlFor="name">Full Name *</Label>
-          <Input
-            id="name"
-            placeholder="Enter your full name"
-            value={formData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            required
-          />
-        </motion.div>
-
-        <motion.div variants={slideVariants} className="space-y-2">
-          <Label htmlFor="email">Email Address *</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email address"
-            value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            required
-          />
-        </motion.div>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <motion.div variants={slideVariants} className="space-y-2">
+              <Label htmlFor="name">Full Name *</Label>
+              <Input id="name" placeholder="Enter your full name" {...field} />
+              {fieldState.error && (
+                <p className="text-sm text-red-500">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </motion.div>
+          )}
+        />
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <motion.div variants={slideVariants} className="space-y-2">
+              <Label htmlFor="email">Email Address *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email address"
+                {...field}
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-500">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </motion.div>
+          )}
+        />
       </div>
 
-      <motion.div variants={slideVariants} className="space-y-2">
-        <Label htmlFor="phone">Phone Number</Label>
-        <Input
-          id="phone"
-          type="tel"
-          placeholder="Enter your phone number"
-          value={formData.phone}
-          onChange={(e) => handleInputChange("phone", e.target.value)}
-        />
-      </motion.div>
+      <Controller
+        control={control}
+        name="phone"
+        render={({ field, fieldState }) => (
+          <motion.div variants={slideVariants} className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="Enter your phone number"
+              {...field}
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red-500">{fieldState.error.message}</p>
+            )}
+          </motion.div>
+        )}
+      />
 
-      <motion.div variants={slideVariants} className="space-y-2">
-        <Label htmlFor="message">Message *</Label>
-        <Textarea
-          id="message"
-          placeholder="Tell us how we can help you..."
-          rows={4}
-          value={formData.message}
-          onChange={(e) => handleInputChange("message", e.target.value)}
-          required
-        />
-      </motion.div>
+      <Controller
+        control={control}
+        name="body"
+        render={({ field, fieldState }) => (
+          <motion.div variants={slideVariants} className="space-y-2">
+            <Label htmlFor="message">Message *</Label>
+            <Textarea
+              id="message"
+              placeholder="Tell us how we can help you..."
+              rows={4}
+              {...field}
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red-500">{fieldState.error.message}</p>
+            )}
+          </motion.div>
+        )}
+      />
 
       <motion.div
         variants={slideVariants}
@@ -150,8 +166,8 @@ export function ContactForm() {
         </div>
       </motion.div>
 
-      <Button type="submit" className="w-full" disabled={loading} size="lg">
-        {loading ? (
+      <Button type="submit" className="w-full" disabled={isLoading} size="lg">
+        {isLoading ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white dark:border-gray-900 mr-2"></div>
             Sending Message...

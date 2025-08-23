@@ -1,6 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Coffee, BookOpen, Info, Sun, Moon } from "lucide-react";
+import {
+  Coffee,
+  BookOpen,
+  Info,
+  Sun,
+  Moon,
+  LayoutDashboard,
+} from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -38,6 +45,14 @@ export function Navbar() {
               >
                 <Info className="w-4 h-4 mr-1" /> About
               </Link>
+              {session && (
+                <Link
+                  href="/dashboard"
+                  className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
+                >
+                  <LayoutDashboard className="w-4 h-4 mr-1" /> Dashboard
+                </Link>
+              )}
             </div>
           </div>
 
