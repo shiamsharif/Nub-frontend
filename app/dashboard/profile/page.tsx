@@ -1,7 +1,6 @@
-import { getSession } from "@/lib/auth";
+import { getSession, getUserProfile } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ProfileDisplay from "./_components/profile-display";
-import { getUserProfile } from "@/lib/get-user";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -9,7 +8,7 @@ export default async function ProfilePage() {
     redirect("/auth/login");
   }
 
-  const user = await getUserProfile((session as any).accessToken);
+  const user = await getUserProfile();
 
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 min-h-[70svh] flex items-center justify-center">

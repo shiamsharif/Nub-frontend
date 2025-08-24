@@ -33,9 +33,9 @@ export default function EditProfileForm({ user }: EditTaskModalProps) {
     resolver: zodResolver(userProfileSchema),
     mode: "onChange",
     values: {
-      username: user.username,
-      phone_number: user.phone_number,
-      university_id: user.university_id,
+      username: user.username ?? "",
+      phone_number: user.phone_number ?? "",
+      university_id: user.university_id ?? "",
     },
   });
 
