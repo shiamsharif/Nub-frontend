@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import useApi from "@/hooks/use-api";
 import { taskViewRevalidate } from "@/lib/tag-invalidate";
-import { CheckCircle } from "lucide-react";
+import { Check, CheckCircle } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -49,13 +49,18 @@ export default function MarkAsResolved({ taskId }: { taskId: number }) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <CheckCircle className="w-4 h-4 mr-2" />
-          Mark Resolved
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-green-500 text-green-500  hover:text-green-600"
+        >
+          <CheckCircle className="w-4 h-4" />
+          Resolve
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <CheckCircle className="w-6 h-6 stroke-green-500" />
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently resolved your
@@ -67,6 +72,7 @@ export default function MarkAsResolved({ taskId }: { taskId: number }) {
           <AlertDialogAction
             disabled={isLoading}
             onClick={() => onMarkAsResolved()}
+            className="bg-green-500 hover:bg-green-600"
           >
             {isLoading ? "Resolving..." : "Resolve"}
           </AlertDialogAction>

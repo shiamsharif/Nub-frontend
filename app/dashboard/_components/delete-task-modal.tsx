@@ -15,6 +15,7 @@ import {
   taskViewRevalidate,
 } from "@/lib/tag-invalidate";
 import { OpenStateType } from "@/schemas/task";
+import { Trash } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
@@ -43,6 +44,7 @@ export default function DeleteTaskModal({
   const onDeleteTask = async () => {
     const response = await deleteTask();
     taskViewRevalidate();
+    taskDetailsRevalidate(taskId);
     if (response) {
       setTask(null);
       onOpenChange(null);
@@ -73,6 +75,7 @@ export default function DeleteTaskModal({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
+          <Trash className="w-6 h-6 stroke-red-500" />
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your
@@ -84,6 +87,7 @@ export default function DeleteTaskModal({
           <AlertDialogAction
             disabled={isLoading}
             onClick={() => onDeleteTask()}
+            className="bg-red-500 hover:bg-red-600"
           >
             {isLoading ? "Deleting..." : "Confirm"}
           </AlertDialogAction>

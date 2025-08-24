@@ -247,7 +247,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
           </div>
 
           {/* Add Comment Form */}
-          <AddComment taskId={task.id} />
+          {task?.status !== "resolved" && <AddComment taskId={task.id} />}
 
           {/* Comments List */}
           <div className="space-y-4">
@@ -258,7 +258,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                   className="text-gray-300 dark:text-gray-200 mx-auto mb-4"
                 />
                 <p className="text-gray-500 dark:text-gray-100">
-                  No comments yet. Be the first to add one!
+                  No comments found!
                 </p>
               </div>
             ) : (
@@ -268,6 +268,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                   comment={comment}
                   onOpenStateChange={setOpenState}
                   setComment={setComment}
+                  task={task}
                 />
               ))
             )}

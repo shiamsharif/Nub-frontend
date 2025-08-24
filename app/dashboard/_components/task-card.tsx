@@ -116,33 +116,35 @@ const TaskCard: React.FC<TaskCardProps> = ({
             <IssueTypeBadge type={task.issues_type} />
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} className="h-8 w-8 p-0">
-              <EllipsisVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem
-              onClick={() => {
-                setTask(task);
-                onOpenStateChange("edit");
-              }}
-            >
-              <SquarePen className="mr-2 stroke-blue-500" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setTask(task);
-                onOpenStateChange("delete");
-              }}
-            >
-              <Trash2 className="mr-2 stroke-red-500" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {task?.status !== "resolved" && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"ghost"} className="h-8 w-8 p-0">
+                <EllipsisVertical />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onClick={() => {
+                  setTask(task);
+                  onOpenStateChange("edit");
+                }}
+              >
+                <SquarePen className="mr-2 stroke-blue-500" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setTask(task);
+                  onOpenStateChange("delete");
+                }}
+              >
+                <Trash2 className="mr-2 stroke-red-500" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {/* Description */}

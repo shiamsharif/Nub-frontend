@@ -5,19 +5,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Comment, OpenStateType } from "@/schemas/task";
+import { Comment, OpenStateType, Task } from "@/schemas/task";
 import { EllipsisVertical, SquarePen, Trash2, User } from "lucide-react";
 
 type CommentCardProps = {
   comment: Comment;
   onOpenStateChange: (openState: OpenStateType) => void;
   setComment: (comment: Comment | null) => void;
+  task: Task;
 };
 
 export const CommentCard: React.FC<CommentCardProps> = ({
   comment,
   onOpenStateChange,
   setComment,
+  task,
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -48,33 +50,35 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             {comment.body}
           </p>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} className="h-8 w-8 p-0">
-              <EllipsisVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem
-              onClick={() => {
-                setComment(comment);
-                onOpenStateChange("edit");
-              }}
-            >
-              <SquarePen className="mr-2 stroke-blue-500" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setComment(comment);
-                onOpenStateChange("delete");
-              }}
-            >
-              <Trash2 className="mr-2 stroke-red-500" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {task?.status !== "resolved" && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"ghost"} className="h-8 w-8 p-0">
+                <EllipsisVertical />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onClick={() => {
+                  setComment(comment);
+                  onOpenStateChange("edit");
+                }}
+              >
+                <SquarePen className="mr-2 stroke-blue-500" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setComment(comment);
+                  onOpenStateChange("delete");
+                }}
+              >
+                <Trash2 className="mr-2 stroke-red-500" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

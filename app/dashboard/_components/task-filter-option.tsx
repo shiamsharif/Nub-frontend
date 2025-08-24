@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -20,14 +20,6 @@ export default function TaskFilterOption({ count }: { count: number }) {
   const [searchQuery, setSearchQuery] = useState<string>(searchTerm);
   const statusFilter = searchParams.get("status") || "all";
   const issuesTypeFilter = searchParams.get("issues_type") || "all";
-  const page_size = Number(searchParams.get("page_size") || 10);
-  const page = Number(searchParams.get("page") || 1);
-
-  // Pagination
-  const pages = Math.ceil((count || 0) / page_size);
-  const isNextDisabled = page >= pages;
-  const isPreviousDisabled = page <= 1;
-
   const pathname = usePathname();
 
   const onChangeSearchParams = (key: string, value: string) => {
@@ -38,12 +30,16 @@ export default function TaskFilterOption({ count }: { count: number }) {
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(
-      () => onChangeSearchParams("search", searchQuery),
-      500
-    );
-    return () => clearTimeout(timeoutId);
+    if (searchQuery) {
+      const timeoutId = setTimeout(
+        () => onChangeSearchParams("search", searchQuery),
+        500
+      );
+      return () => clearTimeout(timeoutId);
+    }
   }, [searchQuery]);
+
+  const hasFilter = searchParams.toString().length > 0;
 
   return (
     <Card className="bg-zinc-50 dark:bg-zinc-800">
@@ -54,69 +50,66 @@ export default function TaskFilterOption({ count }: { count: number }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 flex justify-end items-center  gap-2">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              disabled={isPreviousDisabled}
-              onClick={() =>
-                onChangeSearchParams("page", (page - 1).toString())
-              }
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              disabled={isNextDisabled}
-              onClick={() =>
-                onChangeSearchParams("page", (page + 1).toString())
-              }
-            >
-              Next
-            </Button>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div className="flex-1 flex flex-wrap items-center gap-4">
+            <div className="relative max-w-sm w-full">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-zinc-50 dark:bg-zinc-900"
+              />
+            </div>
+            <div className="max-w-max w-full">
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => {
+                  onChangeSearchParams("status", value === "all" ? "" : value);
+                }}
+              >
+                <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="max-w-max w-full">
+              <Select
+                value={issuesTypeFilter}
+                onValueChange={(value) => {
+                  onChangeSearchParams(
+                    "issues_type",
+                    value === "all" ? "" : value
+                  );
+                }}
+              >
+                <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectValue placeholder="Filter by issues type" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectItem value="all">All Issues</SelectItem>
+                  <SelectItem value="hardware">Hardware</SelectItem>
+                  <SelectItem value="software">Software</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-zinc-50 dark:bg-zinc-900"
-            />
-          </div>
-          <Select
-            value={statusFilter}
-            onValueChange={(value) => {
-              onChangeSearchParams("status", value === "all" ? "" : value);
+          <Button
+            disabled={!hasFilter}
+            variant="destructive"
+            className="disabled:bg-gray-400"
+            onClick={() => {
+              router.push("/dashboard");
             }}
           >
-            <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={issuesTypeFilter}
-            onValueChange={(value) => {
-              onChangeSearchParams("issues_type", value === "all" ? "" : value);
-            }}
-          >
-            <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-              <SelectValue placeholder="Filter by issues type" />
-            </SelectTrigger>
-            <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
-              <SelectItem value="all">All Issues</SelectItem>
-              <SelectItem value="hardware">Hardware</SelectItem>
-              <SelectItem value="software">Software</SelectItem>
-            </SelectContent>
-          </Select>
+            <X />
+            Clear
+          </Button>
         </div>
       </CardContent>
     </Card>
