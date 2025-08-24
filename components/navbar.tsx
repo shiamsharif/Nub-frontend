@@ -23,32 +23,30 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b bg-zinc-50 dark:bg-zinc-900 backdrop-blur supports-[backdrop-filter]:bg-zinc-50 dark:supports-[backdrop-filter]:bg-zinc-900 sticky top-0 z-50 shadow-md">
+    <nav className="border-b bg-gradient-to-br from-blue-700 dark:from-blue-900 to-purple-700 dark:to-zinc-800 text-gray-100 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
-                NUB IT Support
-              </span>
+              <span className="font-semibold text-lg ">NUB IT Support</span>
             </Link>
             <div className="hidden md:flex ml-8 space-x-6">
               <Link
                 href="/blog"
-                className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
+                className=" hover:text-blue-600 transition-colors flex items-center"
               >
                 <BookOpen className="w-4 h-4 mr-1" /> Blog
               </Link>
               <Link
                 href="/about"
-                className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
+                className=" hover:text-blue-600 transition-colors flex items-center"
               >
                 <Info className="w-4 h-4 mr-1" /> About
               </Link>
               {session && (
                 <Link
                   href="/dashboard"
-                  className="text-gray-600 dark:text-gray-100 hover:text-blue-600 transition-colors flex items-center"
+                  className=" hover:text-blue-600 transition-colors flex items-center"
                 >
                   <LayoutDashboard className="w-4 h-4 mr-1" /> Dashboard
                 </Link>
@@ -76,7 +74,12 @@ export function Navbar() {
               </Button>
             </motion.div>
 
-            <Button onClick={toggleTheme} variant="outline" size="icon">
+            <Button
+              onClick={toggleTheme}
+              variant="outline"
+              size="icon"
+              className="bg-transparent dark:border-gray-300"
+            >
               <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
               <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
               <span className="sr-only">Toggle theme</span>

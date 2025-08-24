@@ -18,7 +18,7 @@ export function Footer() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.6 }}
-      className="relative bg-gradient-to-br from-blue-700 dark:from-zinc-900 to-purple-700 dark:to-zinc-800 text-gray-100 py-12 overflow-hidden"
+      className="relative bg-gradient-to-br from-blue-700 dark:from-blue-900 to-purple-700 dark:to-zinc-800 text-gray-100 py-12 overflow-hidden"
     >
       {/* Playful background shapes */}
       <div className="absolute top-0 left-0 w-full h-full">
