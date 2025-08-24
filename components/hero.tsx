@@ -43,13 +43,7 @@ export default function Hero() {
         className={`absolute inset-0 z-0 bg-[length:40px_40px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,_#000_60%,_transparent_100%)] [background-image:linear-gradient(to_right,_#e2e8f0_1px,_transparent_1px),_linear-gradient(to_bottom,_#e2e8f0_1px,_transparent_1px),_linear-gradient(to_right,_#1e293b_1px,_transparent_1px),_linear-gradient(to_bottom,_#1e293b_1px,_transparent_1px)] dark:[background-image:linear-gradient(to_right,_#1e293b_1px,_transparent_1px),_linear-gradient(to_bottom,_#1e293b_1px,_transparent_1px),_linear-gradient(to_right,_#374151_1px,_transparent_1px),_linear-gradient(to_bottom,_#374151_1px,_transparent_1px)]`}
       />
       {/* Your Content/Components */}
-      <motion.section
-        initial="initial"
-        whileInView={"animate"}
-        viewport={{ once: true, amount: 0.8 }}
-        variants={sectionVariants}
-        className="relative overflow-hidden py-24 md:py-32"
-      >
+      <section className="relative overflow-hidden py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.div variants={slideVariants}>
@@ -160,7 +154,7 @@ export default function Hero() {
             </motion.div>
           </motion.div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { SessionPayload } from "@/lib/auth";
+import { toast } from "sonner";
 
 type AuthContextType = {
   session: SessionPayload | null;
@@ -22,7 +23,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<SessionPayload | null>(null);
-  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,7 +67,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshToken = useCallback(async () => {
     try {
-      const response = await fetch("/api/auth/refresh");
+      const existingRefreshToken = session?.refreshToken;
+      if (!existingRefreshToken) {
+        toast("Failed to refresh token", {
+          icon: "❌",
+          duration: 3000,
+          action: {
+            label: "Dismiss",
+            onClick: () => toast.dismiss(),
+          },
+        });
+        return null;
+      }
+      const response = await fetch("/api/auth/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accessToken: session?.accessToken,
+          refreshToken: existingRefreshToken,
+          expiresIn: session?.expiresAt,
+        }),
+      });
       if (response.ok) {
         const data: SessionPayload = await response.json();
         setSession(data);
