@@ -6,13 +6,13 @@ import Link from "next/link";
 import { loginSchema, LoginSchemaType } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import useApi from "@/hooks/use-api";
 import { InputBox } from "@/components/ui/input-box";
 import { toast } from "sonner";
 import { useAuth } from "@/context/auth-context";
-import { SessionPayload } from "@/lib/auth";
+import { useState } from "react";
 
 export default function LoginForm() {
+  const [loginLoading, setLoginLoading] = useState(false);
   const { control, handleSubmit } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -20,51 +20,26 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const { setSession } = useAuth();
-  const { mutate: login, isLoading } = useApi("/account/login/", {
-    method: "POST",
-  });
+  const { login } = useAuth();
   const router = useRouter();
 
   const onSubmit = async (data: LoginSchemaType) => {
+    setLoginLoading(true);
     try {
-      const loginResponse = (await login(data)) as
-        | { access: string; refresh: string }
-        | undefined;
-      if (loginResponse) {
-        const payload = {
-          accessToken: loginResponse.access,
-          refreshToken: loginResponse.refresh,
-          expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
-        };
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to create session");
-        } else {
-          const result = await response.json();
-          toast(result?.message || "Login successful", {
-            icon: "✅",
-            duration: 3000,
-          });
-          // console.log("Session From Login:", result);
-          setSession(result?.payload as SessionPayload);
-          router.push("/dashboard");
-        }
-      }
+      await login(data.email, data.password);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
       toast("Failed to login", {
         icon: "❌",
         duration: 3000,
+        action: {
+          label: "Dismiss",
+          onClick: () => toast.dismiss(),
+        },
       });
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -101,8 +76,8 @@ export default function LoginForm() {
             />
           )}
         />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign in"}
+        <Button type="submit" className="w-full" disabled={loginLoading}>
+          {loginLoading ? "Signing in..." : "Sign in"}
         </Button>
       </form>
       <div className="mt-4 text-center space-y-2">
