@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,16 +11,10 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { FlipWords } from "./ui/flip-words";
 import { slideVariants } from "@/lib/animate";
+import { useAuth } from "@/context/auth-context";
 
 export default function Hero() {
-  const sectionVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
+  const { session, isLoading } = useAuth();
 
   const cardVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -47,9 +42,6 @@ export default function Hero() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.div variants={slideVariants}>
-              {/* <Badge className="mb-4 bg-blue-100 text-blue-800 hover:bg-blue-100 text-sm px-3 py-1">
-                Trusted by 5000+ Users at NUB
-              </Badge> */}
               <ShimmerButton />
             </motion.div>
 
@@ -74,25 +66,26 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/auth/register">
-                <Button
-                  size="lg"
-                  className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all"
-                >
-                  Start Managing Tasks
-                </Button>
-              </Link>
-              <Link href="/auth/login">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="text-lg px-8 py-3 bg-transparent shadow-lg hover:shadow-xl transition-all"
-                >
-                  Sign In to Dashboard
-                </Button>
-              </Link>
+              {session ? (
+                <Link href="/dashboard">
+                  <Button
+                    size="lg"
+                    className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Start Managing Tasks
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/auth/login">
+                  <Button
+                    size="lg"
+                    className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Sign In to Dashboard
+                  </Button>
+                </Link>
+              )}
             </motion.div>
           </div>
         </div>

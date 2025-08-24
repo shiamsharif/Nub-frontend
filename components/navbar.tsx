@@ -33,20 +33,20 @@ export function Navbar() {
             <div className="hidden md:flex ml-8 space-x-6">
               <Link
                 href="/blog"
-                className=" hover:text-blue-600 transition-colors flex items-center"
+                className=" hover:underline transition-colors flex items-center"
               >
                 <BookOpen className="w-4 h-4 mr-1" /> Blog
               </Link>
               <Link
                 href="/about"
-                className=" hover:text-blue-600 transition-colors flex items-center"
+                className=" hover:underline transition-colors flex items-center"
               >
                 <Info className="w-4 h-4 mr-1" /> About
               </Link>
               {session && (
                 <Link
                   href="/dashboard"
-                  className=" hover:text-blue-600 transition-colors flex items-center"
+                  className=" hover:underline transition-colors flex items-center"
                 >
                   <LayoutDashboard className="w-4 h-4 mr-1" /> Dashboard
                 </Link>

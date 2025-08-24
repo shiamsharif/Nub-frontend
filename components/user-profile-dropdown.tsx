@@ -16,57 +16,43 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { getUserProfile } from "@/lib/get-user";
 import { useAuth } from "@/context/auth-context";
-import { User } from "@/schemas/auth";
 
 export default function UserProfileDropdown() {
-  const [user, setUser] = useState<User | null>(null);
   const { session, logout } = useAuth();
-
-  const getUser = useCallback(async (accessToken: string) => {
-    return await getUserProfile(accessToken);
-  }, []);
-
-  useEffect(() => {
-    if (session) {
-      getUser(session.accessToken)
-        .then((user) => {
-          setUser(user);
-        })
-        .catch((error) => {
-          console.error("Error fetching user:", error);
-        });
-    }
-  }, [session, getUser]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="relative">
           <Avatar className="h-8 w-8">
             <AvatarImage
               src="/placeholder-user.jpg"
-              alt={user?.username ?? "Gues"}
+              alt={session?.user?.username ?? "Gues"}
             />
             <AvatarFallback>
-              {(user?.username ?? "Gues").charAt(0)}
+              {(session?.user?.username ?? "Gues").charAt(0)}
             </AvatarFallback>
           </Avatar>
+          <h2 className="font-semibold capitalize">
+            {session?.user?.user_type === "Student" ||
+            session?.user?.user_type === "Staff"
+              ? session?.user?.username ?? "Guest"
+              : session?.user?.username ?? "Admin"}
+          </h2>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-2">
             <p className="text-sm font-medium leading-none">
-              {user?.username ?? "Gues"}
+              {session?.user?.username ?? "Gues"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
+              {session?.user?.email}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.user_type}
+              {session?.user?.user_type}
             </p>
           </div>
         </DropdownMenuLabel>
