@@ -33,7 +33,7 @@ export function UserDashboard({ data }: { data: Result<Task> }) {
             {/* Filters */}
             <TaskFilterOption count={data.count} />
 
-            <TaskList tasks={data.results} />
+            <TaskList tasks={data} />
           </div>
 
           <CreateTaskDialog

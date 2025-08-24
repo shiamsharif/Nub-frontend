@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import useApi from "@/hooks/use-api";
-import { taskViewRevalidate } from "@/lib/tag-invalidate";
+import {
+  taskDetailsRevalidate,
+  taskViewRevalidate,
+} from "@/lib/tag-invalidate";
 import { Check, CheckCircle } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -33,6 +36,7 @@ export default function MarkAsResolved({ taskId }: { taskId: number }) {
   const onMarkAsResolved = async () => {
     const response = await markAsResolved({ status: "resolved" });
     taskViewRevalidate();
+    taskDetailsRevalidate(taskId);
     if (response) {
       toast("Task resolved successfully!", {
         icon: "✅",

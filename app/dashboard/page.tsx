@@ -1,7 +1,6 @@
 import { UserDashboard } from "./_components/user-dashboard";
-import { getSession } from "@/lib/auth";
+import { getSession, getUserProfile } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getUserProfile } from "@/lib/get-user";
 import { fetchTaskList } from "@/lib/dashboard";
 import { AdminDashboard } from "./_components/admin-dashboard";
 
@@ -24,7 +23,7 @@ export default async function DashboardPage({
   const issuesTypeFilter = params?.issues_type || ("all" as string);
   const searchTerm = params?.search || "";
 
-  const user = await getUserProfile((session as any).accessToken);
+  const user = await getUserProfile();
 
   if (user?.user_type === "Student" || user?.user_type === "Staff") {
     const tasksForStudent = await fetchTaskList({

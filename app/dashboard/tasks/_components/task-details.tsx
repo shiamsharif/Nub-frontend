@@ -12,13 +12,16 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Comment, OpenStateType, Task } from "@/schemas/task";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CommentCard } from "./comment-card";
 import AddComment from "./add-comment";
 import DeleteCommentModal from "./delete-comment";
 import EditComment from "./edit-comment";
+import MarkAsResolved from "../../_components/mark-as-resolved";
+import { User } from "@/schemas/auth";
+import { useAuth } from "@/context/auth-context";
 
 interface TaskDetailsProps {
   task: Task;
@@ -84,6 +87,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
   const [openState, setOpenState] = useState<OpenStateType | null>(null);
   const [comment, setComment] = useState<Comment | null>(null);
   const router = useRouter();
+  const { session, logout } = useAuth();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -94,6 +98,10 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
       minute: "2-digit",
     });
   };
+
+  const isAdmin =
+    session?.user?.user_type === "Teacher" ||
+    session?.user?.user_type === "ItStaff";
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 py-8 px-4">
@@ -120,6 +128,9 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                   <IssueTypeBadge type={task.issues_type} />
                 </div>
               </div>
+              {isAdmin && task.status !== "resolved" && (
+                <MarkAsResolved taskId={task.id} />
+              )}
             </div>
 
             {/* Description */}
