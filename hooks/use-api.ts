@@ -250,8 +250,12 @@ function useApi<T>(url: string, options: ApiOptions<T> = {}) {
 
         const config: RequestInit = {
           method,
-          headers,
-          // credentials: "include",
+          headers: {
+            ...headers,
+            ...(requireAuth && {
+              Authorization: `Bearer ${session?.accessToken}`,
+            }),
+          },
         };
 
         if (method !== "GET" && (body || executionBody)) {
