@@ -105,18 +105,20 @@ const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
   );
 };
 
-export function AdminDashboard({ tasks }: { tasks: Result<Task> }) {
+export function AdminDashboard({
+  tasks,
+  pendingCount,
+  resolvedCount,
+}: {
+  tasks: Result<Task>;
+  pendingCount: Result<Task>;
+  resolvedCount: Result<Task>;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [openState, setOpenState] = useState<OpenStateType | null>(null);
-  const pendingTasks = tasks.results.filter(
-    (task) => task.status === "pending"
-  );
-  const resolvedTasks = tasks.results.filter(
-    (task) => task.status === "resolved"
-  );
 
   const page_size = Number(searchParams.get("page_size") || 10);
   const page = Number(searchParams.get("page") || 1);
@@ -173,7 +175,7 @@ export function AdminDashboard({ tasks }: { tasks: Result<Task> }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-600">
-                  {pendingTasks.length}
+                  {pendingCount?.count}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Awaiting attention
@@ -190,7 +192,7 @@ export function AdminDashboard({ tasks }: { tasks: Result<Task> }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {resolvedTasks.length}
+                  {resolvedCount?.count}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Successfully completed

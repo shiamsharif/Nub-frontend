@@ -3,7 +3,6 @@ import { authenticatedFetch } from "./auth";
 
 type FetchTaskListProps = {
   endpoint: string;
-  accessToken: string;
   page: string;
   page_size: string;
   statusFilter: string;
@@ -13,7 +12,6 @@ type FetchTaskListProps = {
 
 export async function fetchTaskList({
   endpoint,
-  accessToken,
   page,
   page_size,
   statusFilter,
@@ -31,22 +29,6 @@ export async function fetchTaskList({
       params.set("issues_type", issuesTypeFilter);
     if (searchTerm) params.set("search", searchTerm);
 
-    // const response = await fetch(
-    //   `${
-    //     process.env.NEXT_PUBLIC_API_URL
-    //   }/task/${endpoint}/?${params.toString()}`,
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //     next: {
-    //       tags: ["task-view"],
-    //       revalidate: 60, // Revalidate every 60 seconds
-    //     },
-    //   }
-    // );
-
     const response = await authenticatedFetch(
       `/task/${endpoint}/?${params.toString()}`,
       {
@@ -57,13 +39,48 @@ export async function fetchTaskList({
       }
     );
 
-    // console.log("Response status:", response);
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
     }
     return await response.json();
   } catch (error) {
     console.error("Error fetching task list:", error);
+    return {
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    };
+  }
+}
+
+export async function pendingTasksCount(): Promise<Result<Task>> {
+  try {
+    const response = await authenticatedFetch("/task/pending-tasks/");
+    if (!response.ok) {
+      throw new Error("Failed to fetch pending tasks count");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching pending tasks count:", error);
+    return {
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    };
+  }
+}
+
+export async function resolvedTasksCount(): Promise<Result<Task>> {
+  try {
+    const response = await authenticatedFetch("/task/resolved-tasks/");
+    if (!response.ok) {
+      throw new Error("Failed to fetch resolved tasks count");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching resolved tasks count:", error);
     return {
       count: 0,
       next: null,

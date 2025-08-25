@@ -12,7 +12,7 @@ export function LandingPage() {
       <Hero />
 
       {/* Contributors Section */}
-      <MeetContributors />
+      {/* <MeetContributors /> */}
 
       {/* Reviews Section */}
       <Reviews />

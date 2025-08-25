@@ -1,42 +1,25 @@
-// import { NextResponse } from "next/server";
-// import { createSession } from "@/lib/auth";
-
-// export async function POST(request: Request) {
-//   try {
-//     const { accessToken, refreshToken, expiresIn } = await request.json();
-
-//     if (!accessToken || !refreshToken || typeof expiresIn !== "number") {
-//       return NextResponse.json(
-//         { message: "Missing tokens or expiry" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Create the session cookie with the received tokens
-//     await createSession(accessToken, refreshToken, expiresIn);
-
-//     const payload = {
-//       accessToken,
-//       refreshToken,
-//       expiresIn,
-//     };
-
-//     return NextResponse.json(
-//       { message: "Login successful", payload },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error("Login API error:", error);
-//     return NextResponse.json(
-//       { message: "Internal server error" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
+import { setSession } from "@/lib/actions";
+import { type SessionPayload } from "@/lib/auth";
 import { type NextRequest, NextResponse } from "next/server";
-import { setSession, type SessionPayload } from "@/lib/auth";
 
+async function getUser(accessToken: string) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/account/me/profile`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
+// POST /api/auth/login
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
@@ -62,13 +45,14 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
+    const user = await getUser(data.access);
 
     // Create session with tokens
     const session: SessionPayload = {
       accessToken: data.access,
       refreshToken: data.refresh,
       expiresAt: Date.now() + (data.expires_in || 3600) * 1000,
-      user: data.user,
+      user: user,
     };
 
     await setSession(session);
