@@ -1,5 +1,5 @@
 import { Task } from "@/schemas/task";
-import { getSession } from "@/lib/auth";
+import { authenticatedFetch, getSession } from "@/lib/auth";
 import TaskDetails from "../_components/task-details";
 import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,19 +9,25 @@ async function fetchTaskDetails(
   accessToken: string
 ): Promise<Task | null> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/task/details/${taskId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        next: {
-          tags: [`task-details-${taskId}`],
-          revalidate: 60, // Revalidate every 60 seconds
-        },
-      }
-    );
+    // const response = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/task/details/${taskId}`,
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${accessToken}`,
+    //     },
+    //     next: {
+    //       tags: [`task-details-${taskId}`],
+    //       revalidate: 60, // Revalidate every 60 seconds
+    //     },
+    //   }
+    // );
+    const response = await authenticatedFetch(`/task/details/${taskId}`, {
+      next: {
+        tags: [`task-details-${taskId}`],
+        revalidate: 60,
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch task details");
     }

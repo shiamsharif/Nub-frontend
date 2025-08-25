@@ -1,4 +1,5 @@
 import { Task } from "@/schemas/task";
+import { authenticatedFetch } from "./auth";
 
 type FetchTaskListProps = {
   endpoint: string;
@@ -30,21 +31,32 @@ export async function fetchTaskList({
       params.set("issues_type", issuesTypeFilter);
     if (searchTerm) params.set("search", searchTerm);
 
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_API_URL
-      }/task/${endpoint}/?${params.toString()}`,
+    // const response = await fetch(
+    //   `${
+    //     process.env.NEXT_PUBLIC_API_URL
+    //   }/task/${endpoint}/?${params.toString()}`,
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${accessToken}`,
+    //     },
+    //     next: {
+    //       tags: ["task-view"],
+    //       revalidate: 60, // Revalidate every 60 seconds
+    //     },
+    //   }
+    // );
+
+    const response = await authenticatedFetch(
+      `/task/${endpoint}/?${params.toString()}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
         next: {
           tags: ["task-view"],
-          revalidate: 60, // Revalidate every 60 seconds
+          revalidate: 60,
         },
       }
     );
+
     // console.log("Response status:", response);
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
