@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
-import { doLogOut } from "@/lib/actions";
+import { signOut, useSession } from "next-auth/react";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -85,7 +84,7 @@ function useApi<T>(url: string, options: ApiOptions<T> = {}) {
         let response = await fetch(BASE_URL + url, config);
 
         if (response.status === 401) {
-          await doLogOut();
+          await signOut();
         }
 
         if (!response.ok) {
