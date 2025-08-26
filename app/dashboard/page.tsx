@@ -1,7 +1,10 @@
 import { UserDashboard } from "./_components/user-dashboard";
-import { getSession, getUserProfile } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { fetchTaskList } from "@/lib/dashboard";
+import { getUserProfile } from "@/lib/auth";
+import {
+  fetchPendingTaskCount,
+  fetchResolvedTaskCount,
+  fetchTaskList,
+} from "@/lib/dashboard";
 import { AdminDashboard } from "./_components/admin-dashboard";
 
 type SearchParams = Promise<{ [key: string]: string | undefined }>;
@@ -11,11 +14,6 @@ export default async function DashboardPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const session = await getSession();
-  if (!session) {
-    redirect("/auth/login");
-  }
-
   const params = await searchParams;
   const page = String(params?.page || 1);
   const page_size = String(params?.page_size || 10);
@@ -28,7 +26,6 @@ export default async function DashboardPage({
   if (user?.user_type === "Student" || user?.user_type === "Staff") {
     const tasksForStudent = await fetchTaskList({
       endpoint: "listView",
-      accessToken: (session as any).accessToken,
       page,
       page_size,
       statusFilter,
@@ -38,15 +35,24 @@ export default async function DashboardPage({
     return <UserDashboard data={tasksForStudent} />;
   }
 
-  const tasksForStaff = await fetchTaskList({
-    endpoint: "dashboard-listView",
-    accessToken: (session as any).accessToken,
-    page,
-    page_size,
-    statusFilter,
-    issuesTypeFilter,
-    searchTerm,
-  });
-
-  return <AdminDashboard tasks={tasksForStaff} />;
+  const [tasksForAdmin, pendingTaskCount, resolvedTaskCount] =
+    await Promise.all([
+      fetchTaskList({
+        endpoint: "dashboard-listView",
+        page,
+        page_size,
+        statusFilter,
+        issuesTypeFilter,
+        searchTerm,
+      }),
+      fetchPendingTaskCount(),
+      fetchResolvedTaskCount(),
+    ]);
+  return (
+    <AdminDashboard
+      tasks={tasksForAdmin}
+      pendingTaskCount={pendingTaskCount}
+      resolvedTaskCount={resolvedTaskCount}
+    />
+  );
 }

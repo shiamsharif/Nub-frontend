@@ -1,13 +1,7 @@
-import { getSession, getUserProfile } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { getUserProfile } from "@/lib/auth";
 import ProfileDisplay from "./_components/profile-display";
 
 export default async function ProfilePage() {
-  const session = await getSession();
-  if (!session) {
-    redirect("/auth/login");
-  }
-
   const user = await getUserProfile();
 
   return (

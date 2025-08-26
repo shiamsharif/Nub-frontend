@@ -1,7 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { OpenStateType, Task } from "@/schemas/task";
-import TaskCard from "./task-card";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import DeleteTaskModal from "./delete-task-modal";
 import { useState } from "react";

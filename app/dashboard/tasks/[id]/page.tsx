@@ -1,42 +1,6 @@
-import { Task } from "@/schemas/task";
-import { authenticatedFetch, getSession } from "@/lib/auth";
 import TaskDetails from "../_components/task-details";
-import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-
-async function fetchTaskDetails(
-  taskId: string,
-  accessToken: string
-): Promise<Task | null> {
-  try {
-    // const response = await fetch(
-    //   `${process.env.NEXT_PUBLIC_API_URL}/task/details/${taskId}`,
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //     next: {
-    //       tags: [`task-details-${taskId}`],
-    //       revalidate: 60, // Revalidate every 60 seconds
-    //     },
-    //   }
-    // );
-    const response = await authenticatedFetch(`/task/details/${taskId}`, {
-      next: {
-        tags: [`task-details-${taskId}`],
-        revalidate: 60,
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch task details");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching task details:", error);
-    return null;
-  }
-}
+import { fetchTaskDetails } from "@/lib/dashboard";
 
 type TaskDetailsPageProps = {
   params: {
@@ -50,12 +14,7 @@ export default async function TaskDetailsPage({
   params: Promise<TaskDetailsPageProps["params"]>;
 }) {
   const { id } = await params;
-  const session = await getSession();
-  if (!session) {
-    redirect("/auth/login");
-  }
-
-  const task = await fetchTaskDetails(id, (session as any).accessToken);
+  const task = await fetchTaskDetails(id);
 
   // Handle case where task is not found
   if (!task) {

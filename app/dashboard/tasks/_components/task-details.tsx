@@ -10,9 +10,10 @@ import {
   Clock,
   ArrowLeft,
   MessageSquare,
+  DoorOpen,
 } from "lucide-react";
 import { Comment, OpenStateType, Task } from "@/schemas/task";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CommentCard } from "./comment-card";
@@ -20,8 +21,7 @@ import AddComment from "./add-comment";
 import DeleteCommentModal from "./delete-comment";
 import EditComment from "./edit-comment";
 import MarkAsResolved from "../../_components/mark-as-resolved";
-import { User } from "@/schemas/auth";
-import { useAuth } from "@/context/auth-context";
+import { useSession } from "next-auth/react";
 
 interface TaskDetailsProps {
   task: Task;
@@ -87,7 +87,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
   const [openState, setOpenState] = useState<OpenStateType | null>(null);
   const [comment, setComment] = useState<Comment | null>(null);
   const router = useRouter();
-  const { session, logout } = useAuth();
+  const { data: session } = useSession();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -206,6 +206,21 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                   </div>
                   <span className="text-sm font-medium">
                     Room {task.room_number}
+                  </span>
+                </div>
+
+                <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-3 mb-2">
+                    <DoorOpen
+                      size={18}
+                      className="text-gray-600 dark:text-gray-100"
+                    />
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      Room Number
+                    </span>
+                  </div>
+                  <span className="font-mono text-sm bg-zinc-50 dark:bg-zinc-700 px-3 py-1 rounded border">
+                    {task.room_number}
                   </span>
                 </div>
               </div>
