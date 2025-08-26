@@ -1,6 +1,6 @@
 "use client";
 import { FAQSection } from "./faq-section";
-import MeetContributors from "./meet-contibuters";
+// import MeetContributors from "./meet-contibuters";
 import ContactSection from "./contact-section";
 import Reviews from "./Reviews";
 import Hero from "./hero";
@@ -12,7 +12,7 @@ export function LandingPage() {
       <Hero />
 
       {/* Contributors Section */}
-      <MeetContributors />
+      {/* <MeetContributors /> */}
 
       {/* Reviews Section */}
       <Reviews />
