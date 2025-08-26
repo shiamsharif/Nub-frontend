@@ -1,10 +1,13 @@
 // middleware.ts
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { auth } from "@/auth";
 
-export function middleware(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
+export default auth((request) => {
+  const isAuthenticated = !!request.auth;
+
   const { pathname } = request.nextUrl;
+
+  console.log({ isAuthenticated });
 
   // List of protected routes
   const protectedRoutes = ["/dashboard", "/profile", "/update-password"];
@@ -26,19 +29,19 @@ export function middleware(request: NextRequest) {
 
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
-  if (isProtected && !session) {
+  if (isProtected && !isAuthenticated) {
     const loginUrl = new URL("/auth/login", request.url);
     loginUrl.searchParams.set("from", pathname); // optional: to redirect back after login
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthRoute && session) {
+  if (isAuthRoute && isAuthenticated) {
     const dashboardUrl = new URL("/", request.url);
     return NextResponse.redirect(dashboardUrl);
   }
 
   return NextResponse.next();
-}
+});
 
 // Apply middleware only on these routes
 export const config = {

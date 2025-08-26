@@ -8,9 +8,6 @@ import {
   HardDrive,
   Monitor,
   AlertCircle,
-  EllipsisVertical,
-  SquarePen,
-  Trash2,
   Eye,
 } from "lucide-react";
 import { OpenStateType, Task } from "@/schemas/task";
@@ -22,28 +19,24 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import MarkAsResolved from "./mark-as-resolved";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const tableCols = [
   "ID",
   "Task Name",
   "Description",
+  "Room Number",
   "Issue Type",
   "Status",
-  "Actions",
+  "Date",
+  "Action",
+  "View",
 ];
 
 const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
@@ -107,19 +100,18 @@ const IssueTypeBadge: React.FC<{ type: Task["issues_type"] }> = ({ type }) => {
 
 export function AdminDashboard({
   tasks,
-  pendingCount,
-  resolvedCount,
+  pendingTaskCount,
+  resolvedTaskCount,
 }: {
   tasks: Result<Task>;
-  pendingCount: Result<Task>;
-  resolvedCount: Result<Task>;
+  pendingTaskCount: number;
+  resolvedTaskCount: number;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [openState, setOpenState] = useState<OpenStateType | null>(null);
-
   const page_size = Number(searchParams.get("page_size") || 10);
   const page = Number(searchParams.get("page") || 1);
 
@@ -175,7 +167,7 @@ export function AdminDashboard({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-600">
-                  {pendingCount?.count}
+                  {pendingTaskCount}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Awaiting attention
@@ -192,7 +184,7 @@ export function AdminDashboard({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {resolvedCount?.count}
+                  {resolvedTaskCount}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Successfully completed
@@ -240,16 +232,17 @@ export function AdminDashboard({
                     {tableCols.map((col) => (
                       <TableHead key={col}>{col}</TableHead>
                     ))}
-                    <TableHead className="w-12" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tasks.results.map((task) => (
                     <TableRow key={task.id}>
+                      <TableCell>{task.id}</TableCell>
                       <TableCell>{task.task_name}</TableCell>
                       <TableCell className="max-w-[200px] truncate">
                         {task.description.split(" ").slice(0, 10).join(" ")}
                       </TableCell>
+                      <TableCell>{task?.room_number ?? "-"}</TableCell>
                       <TableCell>
                         <IssueTypeBadge type={task.issues_type} />
                       </TableCell>
@@ -264,62 +257,27 @@ export function AdminDashboard({
                         }).format(new Date(task.created_at))}
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
-                          {task.status !== "resolved" && (
-                            <MarkAsResolved taskId={task.id} />
-                          )}
-                          <Link href={`/dashboard/tasks/${task.id}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-blue-500 text-blue-500 hover:text-blue-600"
-                            >
-                              <Eye />
-                              Details
-                            </Button>
-                          </Link>
-                        </div>
+                        {task.status !== "resolved" ? (
+                          <MarkAsResolved taskId={task.id} />
+                        ) : (
+                          "-"
+                        )}
                       </TableCell>
                       <TableCell>
-                        {task.status !== "resolved" && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant={"ghost"} className="h-8 w-8 p-0">
-                                <EllipsisVertical />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedTask(task);
-                                  setOpenState("edit");
-                                }}
-                              >
-                                <SquarePen className="mr-2 stroke-blue-500" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedTask(task);
-                                  setOpenState("delete");
-                                }}
-                              >
-                                <Trash2 className="mr-2 stroke-red-500" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
+                        <Link href={`/dashboard/tasks/${task.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-blue-500 text-blue-500 hover:text-blue-600"
+                          >
+                            <Eye />
+                            Details
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3}></TableCell>
-                    <TableCell className="text-right"></TableCell>
-                  </TableRow>
-                </TableFooter>
               </Table>
             </CardContent>
           </Card>

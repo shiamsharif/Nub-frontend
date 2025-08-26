@@ -2,20 +2,20 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/auth-context";
 import Spinner from "../ui/spinner";
+import { useSession } from "next-auth/react";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { session, isLoading } = useAuth(); // assuming your context exposes these
+  const { data: session, status } = useSession(); // assuming your context exposes these
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !session) {
+    if (status !== "loading" && !session) {
       router.replace("/auth/login");
     }
-  }, [isLoading, session, router]);
+  }, [status, session, router]);
 
-  if (isLoading) {
+  if (status === "loading") {
     return <Spinner />;
   }
 

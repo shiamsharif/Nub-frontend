@@ -11,10 +11,10 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { FlipWords } from "./ui/flip-words";
 import { slideVariants } from "@/lib/animate";
-import { useAuth } from "@/context/auth-context";
+import { useSession } from "next-auth/react";
 
 export default function Hero() {
-  const { session, isLoading } = useAuth();
+  const { data: session } = useSession();
 
   const cardVariants: Variants = {
     hidden: { opacity: 0, y: 20 },

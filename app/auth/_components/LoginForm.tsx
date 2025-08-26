@@ -8,8 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { InputBox } from "@/components/ui/input-box";
 import { toast } from "sonner";
-import { useAuth } from "@/context/auth-context";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
   const [loginLoading, setLoginLoading] = useState(false);
@@ -20,14 +20,14 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const { login } = useAuth();
-  const router = useRouter();
-
   const onSubmit = async (data: LoginSchemaType) => {
     setLoginLoading(true);
     try {
-      await login(data.email, data.password);
-      router.push("/dashboard");
+      signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: "/dashboard",
+      });
     } catch (error) {
       console.error("Login error:", error);
       toast("Failed to login", {

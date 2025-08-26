@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { useAuth } from "@/context/auth-context";
+import { signOut, useSession } from "next-auth/react";
 
 export default function UserProfileDropdown() {
-  const { session, logout } = useAuth();
+  const { data: session } = useSession();
 
   return (
     <DropdownMenu>
@@ -76,7 +76,7 @@ export default function UserProfileDropdown() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
+        <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

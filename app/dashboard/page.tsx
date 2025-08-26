@@ -1,9 +1,9 @@
 import { UserDashboard } from "./_components/user-dashboard";
 import { getUserProfile } from "@/lib/auth";
 import {
+  fetchPendingTaskCount,
+  fetchResolvedTaskCount,
   fetchTaskList,
-  pendingTasksCount,
-  resolvedTasksCount,
 } from "@/lib/dashboard";
 import { AdminDashboard } from "./_components/admin-dashboard";
 
@@ -35,24 +35,24 @@ export default async function DashboardPage({
     return <UserDashboard data={tasksForStudent} />;
   }
 
-  const [tasksForStaff, pendingCount, resolvedCount] = await Promise.all([
-    fetchTaskList({
-      endpoint: "dashboard-listView",
-      page,
-      page_size,
-      statusFilter,
-      issuesTypeFilter,
-      searchTerm,
-    }),
-    pendingTasksCount(),
-    resolvedTasksCount(),
-  ]);
-
+  const [tasksForAdmin, pendingTaskCount, resolvedTaskCount] =
+    await Promise.all([
+      fetchTaskList({
+        endpoint: "dashboard-listView",
+        page,
+        page_size,
+        statusFilter,
+        issuesTypeFilter,
+        searchTerm,
+      }),
+      fetchPendingTaskCount(),
+      fetchResolvedTaskCount(),
+    ]);
   return (
     <AdminDashboard
-      tasks={tasksForStaff}
-      pendingCount={pendingCount}
-      resolvedCount={resolvedCount}
+      tasks={tasksForAdmin}
+      pendingTaskCount={pendingTaskCount}
+      resolvedTaskCount={resolvedTaskCount}
     />
   );
 }

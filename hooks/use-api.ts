@@ -1,8 +1,6 @@
 "use client";
-
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/context/auth-context";
-// import type { ApiState, ApiOptions } from "./types";
+import { signOut, useSession } from "next-auth/react";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -38,7 +36,7 @@ function useApi<T>(url: string, options: ApiOptions<T> = {}) {
     requireAuth = false,
   } = options;
 
-  const { session, logout, refetchSession } = useAuth();
+  const { data: session } = useSession();
 
   const [state, setState] = useState<ApiState<T>>({
     data: null,
@@ -86,19 +84,7 @@ function useApi<T>(url: string, options: ApiOptions<T> = {}) {
         let response = await fetch(BASE_URL + url, config);
 
         if (response.status === 401) {
-          await refetchSession();
-
-          if (!session) {
-            await logout();
-            throw new Error("Session expired. Please login again.");
-          }
-
-          response = await fetch(BASE_URL + url, config);
-
-          if (response.status === 401) {
-            await logout();
-            throw new Error("Session expired. Please login again.");
-          }
+          await signOut();
         }
 
         if (!response.ok) {
@@ -137,18 +123,7 @@ function useApi<T>(url: string, options: ApiOptions<T> = {}) {
         throw err;
       }
     },
-    [
-      url,
-      method,
-      body,
-      headers,
-      onSuccess,
-      onError,
-      session,
-      requireAuth,
-      logout,
-      refetchSession,
-    ]
+    [url, method, body, headers, onSuccess, onError, session, requireAuth]
   );
 
   useEffect(() => {
