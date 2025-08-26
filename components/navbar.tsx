@@ -28,7 +28,7 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="font-semibold text-lg ">NUB IT Support</span>
+              <span className="font-semibold text-lg ">NUB IT</span>
             </Link>
             <div className="hidden md:flex ml-8 space-x-6">
               <Link

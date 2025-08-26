@@ -119,7 +119,7 @@ export function CreateTaskDialog({
                     label="Computer ID"
                     {...field}
                     placeholder="Enter computer ID"
-                    required
+                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -135,7 +135,7 @@ export function CreateTaskDialog({
                     label="Monitor ID"
                     {...field}
                     placeholder="Enter monitor ID"
-                    required
+                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -150,7 +150,7 @@ export function CreateTaskDialog({
                     label="UPS ID"
                     {...field}
                     placeholder="Enter ups ID"
-                    required
+                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -205,7 +205,7 @@ export function CreateTaskDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Task"}
+              {isLoading ? "Submitting..." : "Submit"}
             </Button>
           </DialogFooter>
         </form>
