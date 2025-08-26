@@ -11,11 +11,11 @@ import {
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/context/auth-context";
 import UserProfileDropdown from "./user-profile-dropdown";
+import { useSession } from "next-auth/react";
 
 export function Navbar() {
-  const { session } = useAuth();
+  const { data: session } = useSession();
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
