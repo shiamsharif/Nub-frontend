@@ -7,8 +7,6 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
-import { use } from "react";
-import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +20,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const session = use(auth());
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
