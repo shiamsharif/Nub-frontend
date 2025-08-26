@@ -23,11 +23,13 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginSchemaType) => {
     setLoginLoading(true);
     try {
-      signIn("credentials", {
+      const res = await signIn("credentials", {
         email: data.email,
         password: data.password,
         callbackUrl: "/dashboard",
       });
+
+      console.log(res);
     } catch (error) {
       console.error("Login error:", error);
       toast("Failed to login", {

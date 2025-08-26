@@ -126,6 +126,7 @@ export const {
           // console.log("Payload ------->", payload);
 
           const res = await axios.post(url, payload);
+          console.log(res);
 
           if (res.status === 200) {
             // console.log("Response from server ------->", res.data);
