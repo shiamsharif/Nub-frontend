@@ -41,9 +41,12 @@ const tableCols = [
   "ID",
   "Task Name",
   "Description",
+  "Room Number",
   "Issue Type",
   "Status",
+  "Date",
   "Actions",
+  "View",
 ];
 
 const StatusBadge: React.FC<{ status: Task["status"] }> = ({ status }) => {
@@ -240,7 +243,6 @@ export function AdminDashboard({
                     {tableCols.map((col) => (
                       <TableHead key={col}>{col}</TableHead>
                     ))}
-                    <TableHead className="w-12" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -250,12 +252,14 @@ export function AdminDashboard({
                       <TableCell className="max-w-[200px] truncate">
                         {task.description.split(" ").slice(0, 10).join(" ")}
                       </TableCell>
+                      <TableCell>{task.room_number}</TableCell>
                       <TableCell>
                         <IssueTypeBadge type={task.issues_type} />
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={task.status} />
                       </TableCell>
+
                       <TableCell>
                         {new Intl.DateTimeFormat("en-US", {
                           month: "short",
@@ -264,62 +268,25 @@ export function AdminDashboard({
                         }).format(new Date(task.created_at))}
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
-                          {task.status !== "resolved" && (
-                            <MarkAsResolved taskId={task.id} />
-                          )}
-                          <Link href={`/dashboard/tasks/${task.id}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-blue-500 text-blue-500 hover:text-blue-600"
-                            >
-                              <Eye />
-                              Details
-                            </Button>
-                          </Link>
-                        </div>
+                        {task.status !== "resolved" && (
+                          <MarkAsResolved taskId={task.id} />
+                        )}
                       </TableCell>
                       <TableCell>
-                        {task.status !== "resolved" && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant={"ghost"} className="h-8 w-8 p-0">
-                                <EllipsisVertical />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedTask(task);
-                                  setOpenState("edit");
-                                }}
-                              >
-                                <SquarePen className="mr-2 stroke-blue-500" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedTask(task);
-                                  setOpenState("delete");
-                                }}
-                              >
-                                <Trash2 className="mr-2 stroke-red-500" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
+                        <Link href={`/dashboard/tasks/${task.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-blue-500 text-blue-500 hover:text-blue-600"
+                          >
+                            <Eye />
+                            Details
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3}></TableCell>
-                    <TableCell className="text-right"></TableCell>
-                  </TableRow>
-                </TableFooter>
               </Table>
             </CardContent>
           </Card>

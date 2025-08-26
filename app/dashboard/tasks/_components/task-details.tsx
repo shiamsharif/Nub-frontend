@@ -205,7 +205,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                     </span>
                   </div>
                   <span className="text-sm font-medium">
-                    Room {task.room_number}
+                    Room: {task.room_number}
                   </span>
                 </div>
               </div>
