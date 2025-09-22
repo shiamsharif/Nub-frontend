@@ -43,6 +43,8 @@ const tableCols = [
   "Description",
   "Issue Type",
   "Status",
+  "Room Number",
+  // "Date & Time",
   "Actions",
 ];
 
@@ -240,12 +242,13 @@ export function AdminDashboard({
                     {tableCols.map((col) => (
                       <TableHead key={col}>{col}</TableHead>
                     ))}
-                    <TableHead className="w-12" />
+                    
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tasks.results.map((task) => (
                     <TableRow key={task.id}>
+                      <TableCell>{task.id}</TableCell>
                       <TableCell>{task.task_name}</TableCell>
                       <TableCell className="max-w-[200px] truncate">
                         {task.description.split(" ").slice(0, 10).join(" ")}
@@ -257,12 +260,17 @@ export function AdminDashboard({
                         <StatusBadge status={task.status} />
                       </TableCell>
                       <TableCell>
+                        {task.room_number}
+                      </TableCell>
+
+
+                      {/* <TableCell>
                         {new Intl.DateTimeFormat("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
                         }).format(new Date(task.created_at))}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         <div className="flex gap-2">
                           {task.status !== "resolved" && (
@@ -280,7 +288,7 @@ export function AdminDashboard({
                           </Link>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {task.status !== "resolved" && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -310,7 +318,7 @@ export function AdminDashboard({
                             </DropdownMenuContent>
                           </DropdownMenu>
                         )}
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
