@@ -18,6 +18,7 @@ export default async function DashboardPage({
   const page = String(params?.page || 1);
   const page_size = String(params?.page_size || 10);
   const statusFilter = params?.status || ("all" as string);
+  const priorityFilter = params?.priority || ("all" as string);
   const issuesTypeFilter = params?.issues_type || ("all" as string);
   const searchTerm = params?.search || "";
 
@@ -29,6 +30,7 @@ export default async function DashboardPage({
       page,
       page_size,
       statusFilter,
+      priorityFilter,
       issuesTypeFilter,
       searchTerm,
     });
@@ -41,6 +43,7 @@ export default async function DashboardPage({
       page,
       page_size,
       statusFilter,
+      priorityFilter,
       issuesTypeFilter,
       searchTerm,
     }),

@@ -4,6 +4,14 @@ import * as z from "zod";
 const taskIssueTypeSchema = z.enum(["hardware", "software"], {
   required_error: "Issues type is required",
 });
+// ("low", "Low"),
+//   ("normal", "Normal"),
+//   ("high", "High"),
+//   ("emergency", "Emergency");
+const prioritySchema = z.enum(["low", "normal", "high", "emergency"], {
+  required_error: "Priority is required",
+});
+
 export const taskSchema = z.object({
   room_number: z.string({ required_error: "Room number is required" }),
   computer_id: z.string({ required_error: "Computer ID is required" }),
@@ -17,6 +25,7 @@ export const taskSchema = z.object({
     .min(10, { message: "Description must be at least 10 characters long" })
     .max(1000, { message: "Description must be at most 1000 characters long" }),
   issues_type: taskIssueTypeSchema,
+  priority: prioritySchema,
 });
 
 // Task Type

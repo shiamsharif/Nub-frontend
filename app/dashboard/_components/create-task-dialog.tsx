@@ -46,6 +46,7 @@ export function CreateTaskDialog({
       monitor_id: "",
       room_number: "",
       ups_id: "",
+      priority: "normal",
     },
   });
   const { mutate: createTask, isLoading } = useApi("/task/create/", {
@@ -119,7 +120,6 @@ export function CreateTaskDialog({
                     label="Computer ID"
                     {...field}
                     placeholder="Enter computer ID"
-                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -135,7 +135,6 @@ export function CreateTaskDialog({
                     label="Monitor ID"
                     {...field}
                     placeholder="Enter monitor ID"
-                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -150,7 +149,6 @@ export function CreateTaskDialog({
                     label="UPS ID"
                     {...field}
                     placeholder="Enter ups ID"
-                    
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -172,6 +170,32 @@ export function CreateTaskDialog({
                     <SelectContent>
                       <SelectItem value="hardware">Hardware</SelectItem>
                       <SelectItem value="software">Software</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="priority"
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <Label htmlFor="priority">
+                    Priority <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Select {...field} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select issues type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="normal">Normal</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="emergency">Emergency</SelectItem>
                     </SelectContent>
                   </Select>
                   {fieldState.error && (

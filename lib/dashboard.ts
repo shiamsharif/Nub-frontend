@@ -6,6 +6,7 @@ type FetchTaskListProps = {
   page: string;
   page_size: string;
   statusFilter: string;
+  priorityFilter: string;
   issuesTypeFilter: string;
   searchTerm: string;
 };
@@ -15,6 +16,7 @@ export async function fetchTaskList({
   page,
   page_size,
   statusFilter,
+  priorityFilter,
   issuesTypeFilter,
   searchTerm,
 }: FetchTaskListProps): Promise<Result<Task>> {
@@ -25,6 +27,8 @@ export async function fetchTaskList({
     });
     if (statusFilter && statusFilter !== "all")
       params.set("status", statusFilter);
+    if (priorityFilter && priorityFilter !== "all")
+      params.set("priority", priorityFilter);
     if (issuesTypeFilter && issuesTypeFilter !== "all")
       params.set("issues_type", issuesTypeFilter);
     if (searchTerm) params.set("search", searchTerm);

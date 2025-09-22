@@ -41,17 +41,17 @@ export default function Hero() {
       <section className="relative overflow-hidden py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <motion.div variants={slideVariants}>
+            {/* <motion.div variants={slideVariants}>
               <ShimmerButton />
-            </motion.div>
+            </motion.div> */}
 
             <motion.h1
               variants={slideVariants}
               className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white   mb-6 leading-tight"
             >
               Get
-              <FlipWords words={["Swift", "Smart", "Sharp"]} />
-              Nub IT Support
+              <FlipWords words={["NUB"]} />
+              IT Support
               <span className="block">For a Better Experience</span>
             </motion.h1>
             <motion.p
@@ -91,7 +91,7 @@ export default function Hero() {
         </div>
 
         {/* Features Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -146,7 +146,7 @@ export default function Hero() {
               </Card>
             </motion.div>
           </motion.div>
-        </div>
+        </div> */}
       </section>
     </div>
   );

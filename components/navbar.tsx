@@ -7,6 +7,7 @@ import {
   Sun,
   Moon,
   LayoutDashboard,
+  Phone,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -55,7 +56,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Animated Buy Me a Coffee Button */}
+            {/* Animated Emergency Button */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -69,8 +70,8 @@ export function Navbar() {
                 className="relative bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-50 dark:text-gray-100 border-0 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-transform duration-700"></div>
-                <Coffee className="w-4 h-4 mr-2 animate-bounce" />
-                <span className="relative z-10">Buy me a Coffee</span>
+                <Phone className="w-4 h-4 mr-2 animate-bounce" />
+                <span className="relative z-10">Emergency Call</span>
               </Button>
             </motion.div>
 

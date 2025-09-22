@@ -19,6 +19,7 @@ export default function TaskFilterOption({ count }: { count: number }) {
   const searchTerm = searchParams.get("search") || "";
   const [searchQuery, setSearchQuery] = useState<string>(searchTerm);
   const statusFilter = searchParams.get("status") || "all";
+  const priorityFilter = searchParams.get("priority") || "all";
   const issuesTypeFilter = searchParams.get("issues_type") || "all";
   const pathname = usePathname();
 
@@ -75,6 +76,28 @@ export default function TaskFilterOption({ count }: { count: number }) {
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="resolved">Resolved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="max-w-max w-full">
+              <Select
+                value={priorityFilter}
+                onValueChange={(value) => {
+                  onChangeSearchParams(
+                    "priority",
+                    value === "all" ? "" : value
+                  );
+                }}
+              >
+                <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectValue placeholder="Filter by priority" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-50 dark:bg-zinc-900">
+                  <SelectItem value="all">All Priority</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="emergency">Emergency</SelectItem>
                 </SelectContent>
               </Select>
             </div>
